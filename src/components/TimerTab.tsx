@@ -2,9 +2,35 @@
 
 import { useTimer } from '@/lib/timerContext'
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react'
+import { useEffect } from 'react'
 
 export default function TimerTab() {
   const { mode, timeRemaining, isRunning, startTimer, pauseTimer, resetTimer, skipSession } = useTimer()
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (isRunning) {
+          pauseTimer()
+        } else {
+          startTimer()
+        }
+      } else if (e.code === 'KeyR') {
+        e.preventDefault()
+        resetTimer()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [isRunning, startTimer, pauseTimer, resetTimer])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)

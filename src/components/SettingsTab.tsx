@@ -6,11 +6,19 @@ import { playNotificationSound } from '@/lib/audio'
 
 export default function SettingsTab() {
   const {
+    workDuration,
+    shortBreakDuration,
+    longBreakDuration,
+    sessionsUntilLong,
     volume,
     soundEnabled,
     notificationSound,
     browserNotificationsEnabled,
     autoStart,
+    setWorkDuration,
+    setShortBreakDuration,
+    setLongBreakDuration,
+    setSessionsUntilLong,
     setVolume,
     setSoundEnabled,
     setNotificationSound,
@@ -172,8 +180,112 @@ export default function SettingsTab() {
           Timer Settings
         </h3>
 
+        {/* Work Duration */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Work Duration
+            </label>
+            <span className="text-sm font-bold text-red-500 dark:text-red-400">
+              {workDuration} min
+            </span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max="60"
+            value={workDuration}
+            onChange={(e) => setWorkDuration(Number(e.currentTarget.value))}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+            aria-label="Work duration in minutes"
+          />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <span>1 min</span>
+            <span>30 min</span>
+            <span>60 min</span>
+          </div>
+        </div>
+
+        {/* Short Break Duration */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Short Break Duration
+            </label>
+            <span className="text-sm font-bold text-green-500 dark:text-green-400">
+              {shortBreakDuration} min
+            </span>
+          </div>
+          <input
+            type="range"
+            min="1"
+            max="15"
+            value={shortBreakDuration}
+            onChange={(e) => setShortBreakDuration(Number(e.currentTarget.value))}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+            aria-label="Short break duration in minutes"
+          />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <span>1 min</span>
+            <span>8 min</span>
+            <span>15 min</span>
+          </div>
+        </div>
+
+        {/* Long Break Duration */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Long Break Duration
+            </label>
+            <span className="text-sm font-bold text-purple-500 dark:text-purple-400">
+              {longBreakDuration} min
+            </span>
+          </div>
+          <input
+            type="range"
+            min="5"
+            max="30"
+            value={longBreakDuration}
+            onChange={(e) => setLongBreakDuration(Number(e.currentTarget.value))}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+            aria-label="Long break duration in minutes"
+          />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <span>5 min</span>
+            <span>18 min</span>
+            <span>30 min</span>
+          </div>
+        </div>
+
+        {/* Sessions Until Long Break */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Sessions Until Long Break
+            </label>
+            <span className="text-sm font-bold text-blue-500 dark:text-blue-400">
+              {sessionsUntilLong}
+            </span>
+          </div>
+          <input
+            type="range"
+            min="2"
+            max="8"
+            value={sessionsUntilLong}
+            onChange={(e) => setSessionsUntilLong(Number(e.currentTarget.value))}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            aria-label="Number of work sessions until long break"
+          />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <span>2</span>
+            <span>5</span>
+            <span>8</span>
+          </div>
+        </div>
+
         {/* Auto-start Toggle */}
-        <div>
+        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -204,10 +316,10 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      {/* More Settings Coming Soon */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
-        <p className="text-gray-600 dark:text-gray-400 text-center py-4">
-          More customization options coming soon! ⚙️
+      {/* Info Message */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+        <p className="text-sm text-blue-800 dark:text-blue-200 text-center">
+          💡 Settings are automatically saved and will apply immediately
         </p>
       </div>
     </div>

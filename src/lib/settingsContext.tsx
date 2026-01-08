@@ -5,6 +5,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 export type NotificationSound = 'chime' | 'bell' | 'gong'
 
 interface SettingsState {
+  workDuration: number
+  shortBreakDuration: number
+  longBreakDuration: number
+  sessionsUntilLong: number
   volume: number
   soundEnabled: boolean
   notificationSound: NotificationSound
@@ -15,6 +19,10 @@ interface SettingsState {
 }
 
 interface SettingsContextType extends SettingsState {
+  setWorkDuration: (duration: number) => void
+  setShortBreakDuration: (duration: number) => void
+  setLongBreakDuration: (duration: number) => void
+  setSessionsUntilLong: (count: number) => void
   setVolume: (volume: number) => void
   setSoundEnabled: (enabled: boolean) => void
   setNotificationSound: (sound: NotificationSound) => void
@@ -27,6 +35,10 @@ interface SettingsContextType extends SettingsState {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
 const DEFAULT_SETTINGS: SettingsState = {
+  workDuration: 25,
+  shortBreakDuration: 5,
+  longBreakDuration: 15,
+  sessionsUntilLong: 4,
   volume: 50,
   soundEnabled: true,
   notificationSound: 'chime',
@@ -70,6 +82,22 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }
   }, [settings, mounted])
 
+  const setWorkDuration = (workDuration: number) => {
+    setSettings((prev) => ({ ...prev, workDuration }))
+  }
+
+  const setShortBreakDuration = (shortBreakDuration: number) => {
+    setSettings((prev) => ({ ...prev, shortBreakDuration }))
+  }
+
+  const setLongBreakDuration = (longBreakDuration: number) => {
+    setSettings((prev) => ({ ...prev, longBreakDuration }))
+  }
+
+  const setSessionsUntilLong = (sessionsUntilLong: number) => {
+    setSettings((prev) => ({ ...prev, sessionsUntilLong }))
+  }
+
   const setVolume = (volume: number) => {
     setSettings((prev) => ({ ...prev, volume }))
   }
@@ -100,6 +128,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const value: SettingsContextType = {
     ...settings,
+    setWorkDuration,
+    setShortBreakDuration,
+    setLongBreakDuration,
+    setSessionsUntilLong,
     setVolume,
     setSoundEnabled,
     setNotificationSound,
