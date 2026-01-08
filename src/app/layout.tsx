@@ -4,6 +4,7 @@ import { TimerProvider } from '@/lib/timerContext'
 import { StatsProvider } from '@/lib/statsContext'
 import { NavigationProvider } from '@/lib/navigationContext'
 import { TaskProvider } from '@/lib/taskContext'
+import { SettingsProvider } from '@/lib/settingsContext'
 
 export const metadata: Metadata = {
   title: 'Pomodoro Timer',
@@ -19,13 +20,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NavigationProvider>
-          <TimerProvider>
-            <StatsProvider>
-              <TaskProvider>
-                {children}
-              </TaskProvider>
-            </StatsProvider>
-          </TimerProvider>
+          <SettingsProvider>
+            <TimerProvider>
+              <StatsProvider>
+                <TaskProvider>
+                  {children}
+                </TaskProvider>
+              </StatsProvider>
+            </TimerProvider>
+          </SettingsProvider>
         </NavigationProvider>
       </body>
     </html>
