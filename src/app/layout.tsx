@@ -19,13 +19,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NavigationProvider>
-          <TimerProvider>
-            <StatsProvider>
-              <TaskProvider>
+          <TaskProvider>
+            <TimerProvider>
+              <StatsProvider>
                 {children}
-              </TaskProvider>
-            </StatsProvider>
-          </TimerProvider>
+              </StatsProvider>
+            </TimerProvider>
+          </TaskProvider>
         </NavigationProvider>
       </body>
     </html>

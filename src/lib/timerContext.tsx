@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
+import { useTasks } from './taskContext'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -28,6 +29,7 @@ const DEFAULT_DURATIONS = {
 }
 
 export function TimerProvider({ children }: { children: ReactNode }) {
+  const { tasks, incrementPomodoros } = useTasks()
   const [mode, setMode] = useState<SessionType>('work')
   const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
   const [isRunning, setIsRunning] = useState(false)
@@ -98,6 +100,14 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     if (timeRemaining === 0 && !sessionCompletedRef.current) {
       sessionCompletedRef.current = true
 
+      // If work session completed, increment pomodoros for active task
+      if (mode === 'work') {
+        const activeTask = tasks.find((task) => task.isActive)
+        if (activeTask) {
+          incrementPomodoros(activeTask.id)
+        }
+      }
+
       // Record session completion in localStorage for stats to pick up
       const sessionData = {
         type: mode,
@@ -125,7 +135,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       return () => clearTimeout(timer)
     }
     return undefined
-  }, [timeRemaining, mode, currentSession, sessionsUntilLong])
+  }, [timeRemaining, mode, currentSession, sessionsUntilLong, tasks, incrementPomodoros])
 
   const value: TimerContextType = {
     mode,
