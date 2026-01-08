@@ -10,6 +10,7 @@ interface TimerState {
   isRunning: boolean
   currentSession: number
   sessionsUntilLong: number
+  lastUpdated?: number
 }
 
 interface TimerContextType extends TimerState {
@@ -27,12 +28,71 @@ const DEFAULT_DURATIONS = {
   longBreak: 15 * 60, // 15 minutes
 }
 
+const STORAGE_KEY = 'pomodoro_timer_state'
+
+// Helper functions for localStorage (with SSR safety)
+const loadState = (): TimerState | null => {
+  if (typeof window === 'undefined') return null
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return null
+    return JSON.parse(stored)
+  } catch {
+    return null
+  }
+}
+
+const saveState = (state: TimerState) => {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.error('Failed to save timer state:', error)
+  }
+}
+
 export function TimerProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<SessionType>('work')
-  const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
-  const [isRunning, setIsRunning] = useState(false)
-  const [currentSession, setCurrentSession] = useState(1)
+  // Initialize state from localStorage or defaults
+  const [mode, setMode] = useState<SessionType>(() => {
+    const saved = loadState()
+    return saved?.mode || 'work'
+  })
+
+  const [timeRemaining, setTimeRemaining] = useState(() => {
+    const saved = loadState()
+    if (saved?.isRunning && saved?.lastUpdated) {
+      // Calculate elapsed time since last save
+      const elapsed = Math.floor((Date.now() - saved.lastUpdated) / 1000)
+      const remaining = saved.timeRemaining - elapsed
+      return Math.max(0, remaining)
+    }
+    return saved?.timeRemaining ?? DEFAULT_DURATIONS.work
+  })
+
+  const [isRunning, setIsRunning] = useState(() => {
+    const saved = loadState()
+    return saved?.isRunning || false
+  })
+
+  const [currentSession, setCurrentSession] = useState(() => {
+    const saved = loadState()
+    return saved?.currentSession || 1
+  })
+
   const [sessionsUntilLong] = useState(4)
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    const state: TimerState = {
+      mode,
+      timeRemaining,
+      isRunning,
+      currentSession,
+      sessionsUntilLong,
+      lastUpdated: Date.now(),
+    }
+    saveState(state)
+  }, [mode, timeRemaining, isRunning, currentSession, sessionsUntilLong])
 
   // Timer countdown effect
   useEffect(() => {
