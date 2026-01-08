@@ -117,6 +117,33 @@ export function TimerProvider({ children }: { children: ReactNode }) {
         console.error('Error recording session:', error)
       }
 
+      // Show browser notification if enabled
+      try {
+        const settings = JSON.parse(localStorage.getItem('pomodoro_settings') || '{}')
+        if (settings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
+          const modeLabels = {
+            work: 'Work Session',
+            shortBreak: 'Short Break',
+            longBreak: 'Long Break',
+          }
+
+          const messages = {
+            work: 'Great job! Time for a break.',
+            shortBreak: 'Break over! Ready to focus?',
+            longBreak: 'Feeling refreshed? Let\'s get back to work!',
+          }
+
+          new Notification(`${modeLabels[mode]} Complete!`, {
+            body: messages[mode],
+            icon: '/icon-192.png', // You can add an icon later
+            badge: '/badge-72.png', // You can add a badge later
+            tag: `pomodoro-${mode}-${Date.now()}`, // Prevents duplicate notifications
+          })
+        }
+      } catch (error) {
+        console.error('Error showing notification:', error)
+      }
+
       // Auto-advance after a short delay
       const timer = setTimeout(() => {
         skipSession()
