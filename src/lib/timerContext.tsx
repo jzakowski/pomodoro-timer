@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -34,9 +34,21 @@ export function TimerProvider({ children }: { children: ReactNode }) {
   const [currentSession, setCurrentSession] = useState(1)
   const [sessionsUntilLong] = useState(4)
 
+  // Track session completion to avoid duplicate recordings
+  const sessionCompletedRef = useRef(false)
+  const currentModeRef = useRef(mode)
+
+  // Update mode ref when mode changes
+  useEffect(() => {
+    currentModeRef.current = mode
+  }, [mode])
+
   // Timer countdown effect
   useEffect(() => {
-    if (!isRunning) return
+    if (!isRunning) {
+      sessionCompletedRef.current = false
+      return
+    }
 
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
@@ -69,7 +81,6 @@ export function TimerProvider({ children }: { children: ReactNode }) {
   const skipSession = () => {
     setIsRunning(false)
     const modes: SessionType[] = ['work', 'shortBreak', 'longBreak']
-    const currentIndex = modes.indexOf(mode)
 
     if (mode === 'work' && currentSession >= sessionsUntilLong) {
       setMode('longBreak')
@@ -81,6 +92,67 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       setCurrentSession((prev) => prev + 1)
     }
   }
+
+  // Auto-advance to next session when timer completes
+  useEffect(() => {
+    if (timeRemaining === 0 && !sessionCompletedRef.current) {
+      sessionCompletedRef.current = true
+
+      // Record session completion in localStorage for stats to pick up
+      const sessionData = {
+        type: mode,
+        duration: DEFAULT_DURATIONS[mode],
+        timestamp: Date.now(),
+      }
+
+      // Store in localStorage for stats context to consume
+      try {
+        const pendingSessions = JSON.parse(localStorage.getItem('pomodoro_pending_sessions') || '[]')
+        pendingSessions.push(sessionData)
+        localStorage.setItem('pomodoro_pending_sessions', JSON.stringify(pendingSessions))
+
+        // Trigger storage event for same-window updates
+        window.dispatchEvent(new Event('local-storage'))
+      } catch (error) {
+        console.error('Error recording session:', error)
+      }
+
+      // Show browser notification if enabled
+      try {
+        const settings = JSON.parse(localStorage.getItem('pomodoro_settings') || '{}')
+        if (settings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
+          const modeLabels = {
+            work: 'Work Session',
+            shortBreak: 'Short Break',
+            longBreak: 'Long Break',
+          }
+
+          const messages = {
+            work: 'Great job! Time for a break.',
+            shortBreak: 'Break over! Ready to focus?',
+            longBreak: 'Feeling refreshed? Let\'s get back to work!',
+          }
+
+          new Notification(`${modeLabels[mode]} Complete!`, {
+            body: messages[mode],
+            icon: '/icon-192.png', // You can add an icon later
+            badge: '/badge-72.png', // You can add a badge later
+            tag: `pomodoro-${mode}-${Date.now()}`, // Prevents duplicate notifications
+          })
+        }
+      } catch (error) {
+        console.error('Error showing notification:', error)
+      }
+
+      // Auto-advance after a short delay
+      const timer = setTimeout(() => {
+        skipSession()
+      }, 1000)
+
+      return () => clearTimeout(timer)
+    }
+    return undefined
+  }, [timeRemaining, mode, currentSession, sessionsUntilLong])
 
   const value: TimerContextType = {
     mode,
