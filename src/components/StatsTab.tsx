@@ -2,9 +2,10 @@
 
 import { useStats } from '@/lib/statsContext'
 import { Clock, Flame, Target, TrendingUp } from 'lucide-react'
+import SessionDistributionPieChart from './SessionDistributionPieChart'
 
 export default function StatsTab() {
-  const { totalSessions, totalMinutes, currentStreak, bestStreak } = useStats()
+  const { totalSessions, totalMinutes, currentStreak, bestStreak, sessionHistory } = useStats()
 
   // Calculate today's focus time
   const todayFocusMinutes = totalMinutes // In a full implementation, this would filter by today
@@ -100,6 +101,9 @@ export default function StatsTab() {
           </div>
         </div>
       </div>
+
+      {/* Session Distribution Pie Chart */}
+      <SessionDistributionPieChart sessionHistory={sessionHistory} />
 
       {/* Auto-update indicator */}
       <div className="text-center text-sm text-gray-500 dark:text-gray-400">
