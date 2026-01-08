@@ -4,7 +4,7 @@ import { useTimer } from '@/lib/timerContext'
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react'
 
 export default function TimerTab() {
-  const { mode, timeRemaining, isRunning, startTimer, pauseTimer, resetTimer, skipSession } = useTimer()
+  const { mode, timeRemaining, isRunning, startTimer, pauseTimer, resetTimer, skipSession, currentSession, sessionsUntilLong } = useTimer()
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -73,6 +73,13 @@ export default function TimerTab() {
             {getModeLabel()}
           </p>
         </div>
+      </div>
+
+      {/* Session Counter */}
+      <div className="text-center">
+        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+          Session {currentSession} of {sessionsUntilLong}
+        </p>
       </div>
 
       {/* Control Buttons */}
