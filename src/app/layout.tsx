@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { TimerProvider } from '@/lib/timerContext'
+import { StatsProvider } from '@/lib/statsContext'
+import { NavigationProvider } from '@/lib/navigationContext'
+import { TaskProvider } from '@/lib/taskContext'
 
 export const metadata: Metadata = {
   title: 'Pomodoro Timer',
@@ -13,7 +17,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NavigationProvider>
+          <TaskProvider>
+            <TimerProvider>
+              <StatsProvider>
+                {children}
+              </StatsProvider>
+            </TimerProvider>
+          </TaskProvider>
+        </NavigationProvider>
+      </body>
     </html>
   )
 }
