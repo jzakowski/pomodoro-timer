@@ -319,7 +319,7 @@ export default function SettingsTab() {
       {/* Info Message */}
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
         <p className="text-sm text-blue-800 dark:text-blue-200 text-center">
-          💡 Settings are automatically saved and will apply immediately
+          Settings are automatically saved and will apply immediately
         </p>
       </div>
     </div>
