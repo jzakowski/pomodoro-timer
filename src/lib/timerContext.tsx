@@ -17,6 +17,7 @@ interface TimerContextType extends TimerState {
   pauseTimer: () => void
   resetTimer: () => void
   skipSession: () => void
+  onWorkComplete: () => void
 }
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined)
@@ -27,7 +28,7 @@ const DEFAULT_DURATIONS = {
   longBreak: 15 * 60, // 15 minutes
 }
 
-export function TimerProvider({ children }: { children: ReactNode }) {
+export function TimerProvider({ children, onWorkComplete }: { children: ReactNode; onWorkComplete?: () => void }) {
   const [mode, setMode] = useState<SessionType>('work')
   const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
   const [isRunning, setIsRunning] = useState(false)
@@ -98,6 +99,11 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     if (timeRemaining === 0 && !sessionCompletedRef.current) {
       sessionCompletedRef.current = true
 
+      // If this was a work session, increment the active task's pomodoros
+      if (mode === 'work' && onWorkComplete) {
+        onWorkComplete()
+      }
+
       // Record session completion in localStorage for stats to pick up
       const sessionData = {
         type: mode,
@@ -125,7 +131,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       return () => clearTimeout(timer)
     }
     return undefined
-  }, [timeRemaining, mode, currentSession, sessionsUntilLong])
+  }, [timeRemaining, mode, currentSession, sessionsUntilLong, onWorkComplete])
 
   const value: TimerContextType = {
     mode,
@@ -137,6 +143,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     pauseTimer,
     resetTimer,
     skipSession,
+    onWorkComplete: onWorkComplete || (() => {}),
   }
 
   return <TimerContext.Provider value={value}>{children}</TimerContext.Provider>
