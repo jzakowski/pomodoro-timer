@@ -2,156 +2,111 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-type Theme = 'light' | 'dark' | 'system'
+export type NotificationSound = 'chime' | 'bell' | 'gong'
 
 interface SettingsState {
-  workDuration: number // in minutes
-  shortBreakDuration: number // in minutes
-  longBreakDuration: number // in minutes
-  sessionsUntilLong: number
-  autoStart: boolean
+  volume: number
   soundEnabled: boolean
-  theme: Theme
+  notificationSound: NotificationSound
+  browserNotificationsEnabled: boolean
+  autoStart: boolean
+  theme: 'light' | 'dark' | 'system'
+  accentColor: string
 }
 
 interface SettingsContextType extends SettingsState {
-  setWorkDuration: (duration: number) => void
-  setShortBreakDuration: (duration: number) => void
-  setLongBreakDuration: (duration: number) => void
-  setSessionsUntilLong: (count: number) => void
-  setAutoStart: (enabled: boolean) => void
+  setVolume: (volume: number) => void
   setSoundEnabled: (enabled: boolean) => void
-  setTheme: (theme: Theme) => void
-  resetSettings: () => void
+  setNotificationSound: (sound: NotificationSound) => void
+  setBrowserNotificationsEnabled: (enabled: boolean) => void
+  setAutoStart: (enabled: boolean) => void
+  setTheme: (theme: 'light' | 'dark' | 'system') => void
+  setAccentColor: (color: string) => void
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
-const SETTINGS_STORAGE_KEY = 'pomodoro_settings'
-
 const DEFAULT_SETTINGS: SettingsState = {
-  workDuration: 25,
-  shortBreakDuration: 5,
-  longBreakDuration: 15,
-  sessionsUntilLong: 4,
-  autoStart: false,
+  volume: 50,
   soundEnabled: true,
+  notificationSound: 'chime',
+  browserNotificationsEnabled: false,
+  autoStart: false,
   theme: 'system',
+  accentColor: '#EF4444',
 }
 
-const loadSettingsFromStorage = (): SettingsState => {
-  if (typeof window === 'undefined') {
-    return DEFAULT_SETTINGS
-  }
-
-  try {
-    const stored = localStorage.getItem(SETTINGS_STORAGE_KEY)
-    if (stored) {
-      const parsed = JSON.parse(stored)
-      return { ...DEFAULT_SETTINGS, ...parsed }
-    }
-  } catch (error) {
-    console.error('Error loading settings from storage:', error)
-  }
-
-  return DEFAULT_SETTINGS
-}
-
-const saveSettingsToStorage = (settings: SettingsState) => {
-  if (typeof window === 'undefined') return
-
-  try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
-  } catch (error) {
-    console.error('Error saving settings to storage:', error)
-  }
-}
+const STORAGE_KEY = 'pomodoro_settings'
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<SettingsState>(DEFAULT_SETTINGS)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  // Load settings on mount
+  // Load settings from localStorage on mount
   useEffect(() => {
-    const loaded = loadSettingsFromStorage()
-    setSettings(loaded)
-    setIsLoaded(true)
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        setSettings((prev) => ({
+          ...prev,
+          ...parsed,
+        }))
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error)
+    }
+    setMounted(true)
   }, [])
 
-  // Apply theme changes to document
+  // Save settings to localStorage whenever they change
   useEffect(() => {
-    if (typeof window === 'undefined' || !isLoaded) return
-
-    const root = document.documentElement
-    const applyTheme = (theme: Theme) => {
-      if (theme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        root.classList.toggle('dark', systemTheme === 'dark')
-      } else {
-        root.classList.toggle('dark', theme === 'dark')
+    if (mounted) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+      } catch (error) {
+        console.error('Error saving settings:', error)
       }
     }
+  }, [settings, mounted])
 
-    applyTheme(settings.theme)
-
-    // Listen for system theme changes if using system theme
-    if (settings.theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      const handler = () => applyTheme('system')
-      mediaQuery.addEventListener('change', handler)
-      return () => mediaQuery.removeEventListener('change', handler)
-    }
-  }, [settings.theme, isLoaded])
-
-  // Save settings whenever they change (after initial load)
-  useEffect(() => {
-    if (isLoaded) {
-      saveSettingsToStorage(settings)
-    }
-  }, [settings, isLoaded])
-
-  const setWorkDuration = (duration: number) => {
-    setSettings((prev) => ({ ...prev, workDuration: duration }))
+  const setVolume = (volume: number) => {
+    setSettings((prev) => ({ ...prev, volume }))
   }
 
-  const setShortBreakDuration = (duration: number) => {
-    setSettings((prev) => ({ ...prev, shortBreakDuration: duration }))
+  const setSoundEnabled = (soundEnabled: boolean) => {
+    setSettings((prev) => ({ ...prev, soundEnabled }))
   }
 
-  const setLongBreakDuration = (duration: number) => {
-    setSettings((prev) => ({ ...prev, longBreakDuration: duration }))
+  const setNotificationSound = (notificationSound: NotificationSound) => {
+    setSettings((prev) => ({ ...prev, notificationSound }))
   }
 
-  const setSessionsUntilLong = (count: number) => {
-    setSettings((prev) => ({ ...prev, sessionsUntilLong: count }))
+  const setBrowserNotificationsEnabled = (browserNotificationsEnabled: boolean) => {
+    setSettings((prev) => ({ ...prev, browserNotificationsEnabled }))
   }
 
-  const setAutoStart = (enabled: boolean) => {
-    setSettings((prev) => ({ ...prev, autoStart: enabled }))
+  const setAutoStart = (autoStart: boolean) => {
+    setSettings((prev) => ({ ...prev, autoStart }))
   }
 
-  const setSoundEnabled = (enabled: boolean) => {
-    setSettings((prev) => ({ ...prev, soundEnabled: enabled }))
-  }
-
-  const setTheme = (theme: Theme) => {
+  const setTheme = (theme: 'light' | 'dark' | 'system') => {
     setSettings((prev) => ({ ...prev, theme }))
   }
 
-  const resetSettings = () => {
-    setSettings(DEFAULT_SETTINGS)
+  const setAccentColor = (accentColor: string) => {
+    setSettings((prev) => ({ ...prev, accentColor }))
   }
 
   const value: SettingsContextType = {
     ...settings,
-    setWorkDuration,
-    setShortBreakDuration,
-    setLongBreakDuration,
-    setSessionsUntilLong,
-    setAutoStart,
+    setVolume,
     setSoundEnabled,
+    setNotificationSound,
+    setBrowserNotificationsEnabled,
+    setAutoStart,
     setTheme,
-    resetSettings,
+    setAccentColor,
   }
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>
