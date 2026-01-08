@@ -1,0 +1,538 @@
+<project_specification>
+  <project_name>Pomodoro Timer App</project_name>
+
+  <overview>
+    Build a beautiful, fully-featured Pomodoro Timer application that helps users stay productive
+    using the Pomodoro Technique. The app should include customizable work/break intervals,
+    task management, session statistics, sound notifications, and a clean, modern UI that's
+    delightful to use. The design should be calming and focused, with smooth animations and
+    visual feedback for all interactions.
+  </overview>
+
+  <technology_stack>
+    <frontend>
+      <framework>Next.js 14 with App Router</framework>
+      <language>TypeScript</language>
+      <styling>Tailwind CSS</styelling>
+      <state_management>React Context + hooks</state_management>
+      <icons>Lucide React</icons>
+      <notifications>Web Audio API for sounds</notifications>
+      <storage>LocalStorage for persistence</storage>
+      <animations>Framer Motion for smooth transitions</animations>
+      <port>3000</port>
+    </frontend>
+
+    <backend>
+      <runtime>None (client-side only with LocalStorage)</runtime>
+      <database>LocalStorage browser API</database>
+      <persistence>IndexedDB for task history</persistence>
+    </backend>
+
+    <browser_apis>
+      <notifications>Notification API for browser notifications</notifications>
+      <audio>Web Audio API for custom notification sounds</audio>
+      <visibility>Page Visibility API for pause when hidden</visibility>
+    </browser_apis>
+  </technology_stack>
+
+  <prerequisites>
+    <environment_setup>
+      - Next.js 14 project with TypeScript
+      - Tailwind CSS configured
+      - No backend required (runs entirely in browser)
+      - LocalStorage for all data persistence
+    </environment_setup>
+  </prerequisites>
+
+  <core_features>
+    <timer_core>
+      - Large, prominent circular timer display in center of screen
+      - Digital countdown (MM:SS format) with smooth transitions
+      - Circular progress ring SVG that animates as time passes
+      - Start/Pause button with icon toggle (Play/Pause)
+      - Reset button to return to full duration
+      - Skip button to jump to next session phase
+      - Timer modes: Work (25 min default), Short Break (5 min), Long Break (15 min)
+      - Auto-start next session option (toggleable)
+      - Keyboard shortcuts: Space to start/pause, R to reset
+      - Timer persists across page reloads (saves state to LocalStorage)
+      - Smooth tick animation every second
+      - Flashing/glowing animation when timer completes
+    </timer_core>
+
+    <session_management>
+      - Work sessions: 25 minutes (default, customizable)
+      - Short break: 5 minutes (default, customizable)
+      - Long break: 15 minutes (default, customizable)
+      - Long break after: 4 work sessions (default, customizable)
+      - Session counter showing current session number
+      - Session progress indicator (e.g., "Session 3 of 4 until long break")
+      - Automatic mode switching (Work → Short Break → Work → ... → Long Break)
+      - Visual indicator of current session type (color-coded)
+      - Session history log (timestamp, type, duration, completed)
+    </session_management>
+
+    <customization_settings>
+      - Work duration slider (1-60 minutes, default 25)
+      - Short break duration slider (1-15 minutes, default 5)
+      - Long break duration slider (5-30 minutes, default 15)
+      - Sessions until long break slider (1-10, default 4)
+      - Auto-start toggle (default off)
+      - Sound notifications toggle (default on)
+      - Browser notifications toggle (default off)
+      - Volume slider for notification sound (0-100%)
+      - Notification sound selection (3 preset sounds: Chime, Bell, Gong)
+      - Theme selection (Light, Dark, System)
+      - Accent color selection (5 preset colors)
+      - Timer title input (custom text to display during work session)
+      - Settings persist to LocalStorage
+    </customization_settings>
+
+    <task_management>
+      - Add task input with placeholder "What are you working on?"
+      - Task list displays all tasks below timer
+      - Each task shows: title, estimated pomodoros, completed pomodoros
+      - Add task button with icon (or Enter key)
+      - Delete task button (trash icon)
+      - Edit task button (pencil icon)
+      - Mark task as active (star icon)
+      - Mark task complete (checkmark icon)
+      - Task priority indicator (High/Medium/Low with colors)
+      - Estimate pomodoros for each task (1-10 selector)
+      - Increment pomodoro count when work session completes
+      - Visual progress bar per task (completed/total)
+      - Active task displays above timer
+      - Auto-prompt to select task when starting work session
+      - Tasks persist to LocalStorage
+      - Clear completed tasks button
+      - Archive completed tasks (keeps them but hides from list)
+    </task_management>
+
+    <statistics_dashboard>
+      - Today's stats: Work sessions completed, total focus time
+      - Current streak: Consecutive days with at least 1 pomodoro
+      - All-time stats: Total sessions, total hours, best streak
+      - Weekly bar chart showing sessions per day (last 7 days)
+      - Session type distribution pie chart (Work vs Break)
+      - Average sessions per day calculation
+      - Most productive day of week
+      - Task completion rate
+      - Stats refresh automatically after each session
+      - Export stats as CSV
+      - Reset all stats button (with confirmation)
+      - Stats stored in LocalStorage
+    </statistics_dashboard>
+
+    <notifications_audio>
+      - Sound notification when timer completes
+      - 3 preset sounds: Chime (gentle), Bell (classic), Gong (deep)
+      - Volume control (0-100%)
+      - Play sound preview button in settings
+      - Browser notification when timer completes (if enabled and permission granted)
+      - Notification shows session type and custom message
+      - Notification click brings window to focus
+      - In-app notification banner for non-audio alert
+      - Optional ticking sound during countdown (toggleable)
+      - Sound fades out after 3 seconds
+    </notifications_audio>
+
+    <visual_design>
+      - Clean, centered layout with timer as hero
+      - Soft, calming color palette (focus-friendly)
+      - Large circular progress ring with smooth animation
+      - Color-coded session types:
+        * Work: Focus Red (#EF4444) or Custom Blue
+        * Short Break: Relax Green (#10B981)
+        * Long Break: Deep Rest Purple (#8B5CF6)
+      - Smooth transitions between session types (color fades)
+      - Timer numbers: Large, monospace font for readability
+      - Subtle gradient background (light mode: warm gray, dark mode: dark slate)
+      - Card-based layout for settings and tasks
+      - Hover effects on all interactive elements
+      - Loading/skeleton states for async operations
+      - Responsive: Mobile-first, scales up to desktop
+    </visual_design>
+
+    <accessibility>
+      - Full keyboard navigation (Tab through all controls)
+      - Keyboard shortcuts documented and visible
+      - ARIA labels on all buttons and inputs
+      - Screen reader announces timer status
+      - High contrast mode support
+      - Focus visible indicators on all focusable elements
+      - Timer announced as live region for screen readers
+      - Skip links for navigation
+    </accessibility>
+
+    <pwa_features>
+      - Install as app (PWA manifest)
+      - Offline support (works without internet)
+      - App icon for home screen
+      - Splash screen
+      - Persistent login (no auth needed)
+    </pwa_features>
+  </core_features>
+
+  <ui_layout>
+    <main_structure>
+      - Single-page application with tab-based navigation
+      - Mobile: Bottom tab bar (Timer, Tasks, Stats, Settings)
+      - Desktop: Side navigation or top tabs
+      - Main content area changes based on active tab
+      - Header shows app title and current streak
+      - Footer shows version and keyboard shortcuts hint
+    </main_structure>
+
+    <timer_tab>
+      - Center: Large circular timer (300px diameter)
+        * Outer ring: Progress indicator (SVG stroke-dasharray)
+        * Center: Digital time display (MM:SS)
+        * Below: Session type label ("Work", "Short Break", "Long Break")
+      - Below timer: Session counter ("Session 3 of 4")
+      - Control buttons (row of 3 buttons, center-aligned):
+        * Left: Skip button (skip icon)
+        * Center: Start/Pause button (large, prominent)
+        * Right: Reset button (refresh icon)
+      - Below controls: Active task (if one is selected)
+      - Bottom: Mini task list (shows 3 most recent tasks)
+      - Background: Subtle gradient based on session type
+    </timer_tab>
+
+    <tasks_tab>
+      - Top: Add task input (text input + "Add" button)
+      - Below: Task filters (All, Active, Completed)
+      - Task list (scrollable):
+        * Each task: Card with title, progress bar, action buttons
+        * Progress bar: Visual (completed/total pomodoros)
+        * Actions: Star (set active), Edit, Delete
+        * Priority badge: High (red), Medium (yellow), Low (gray)
+      - Bottom: "Clear completed" button
+      - Empty state: Illustration + "No tasks yet" message
+    </tasks_tab>
+
+    <stats_tab>
+      - Top: Date range selector (Today, Week, All-time)
+      - Stats cards grid (2x2):
+        * Card 1: Today's sessions (large number)
+        * Card 2: Focus time today (HH:MM format)
+        * Card 3: Current streak (fire icon)
+        * Card 4: Total all-time sessions
+      - Charts section:
+        * Weekly bar chart (sessions per day)
+        * Pie chart (work vs break distribution)
+      - Bottom: "Export CSV" and "Reset Stats" buttons
+    </stats_tab>
+
+    <settings_tab>
+      - Grouped sections (each in a card):
+        * Timer Durations (sliders for work, breaks)
+        * Auto-start toggle
+        * Notifications & Sound (toggles, volume, sound selector)
+        * Appearance (theme, accent color)
+        * Data Management (export, import, clear all)
+      - Each section has expand/collapse
+      - Save button (or auto-save)
+      - Reset to defaults button
+    </settings_tab>
+  </ui_layout>
+
+  <design_system>
+    <color_palette>
+      <light_mode>
+        - Background: Warm gray gradient (#F9FAFB to #F3F4F6)
+        - Surface: White (#FFFFFF)
+        - Text primary: Near black (#111827)
+        - Text secondary: Gray (#6B7280)
+        - Border: Light gray (#E5E7EB)
+        - Work session: Focus Red (#EF4444)
+        - Short break: Relax Green (#10B981)
+        - Long break: Deep Purple (#8B5CF6)
+      </light_mode>
+      <dark_mode>
+        - Background: Dark slate gradient (#1F2937 to #111827)
+        - Surface: Dark gray (#374151)
+        - Text primary: Off-white (#F9FAFB)
+        - Text secondary: Gray (#9CA3AF)
+        - Border: Dark gray (#4B5563)
+      </dark_mode>
+    </color_palette>
+
+    <typography>
+      - Font family: System fonts (Inter, SF Pro, Segoe UI)
+      - Timer display: Monospace (JetBrains Mono, Consolas) for fixed width
+      - Heading sizes: H1 (32px), H2 (24px), H3 (18px)
+      - Body text: 16px, line-height 1.5
+      - Timer numbers: 80px (desktop), 60px (tablet), 48px (mobile)
+    </typography>
+
+    <components>
+      <buttons>
+        - Primary: Large, rounded-full, accent color background
+        - Secondary: Outline style, hover fills with accent
+        - Icon buttons: Square, rounded-lg, subtle hover background
+        - Disabled: 40% opacity, no-interaction cursor
+      </buttons>
+
+      <cards>
+        - Background: Surface color (white/dark gray)
+        - Border: 1px, rounded-xl (12px)
+        - Shadow: Subtle (sm), increases on hover
+        - Padding: p-4 (mobile), p-6 (desktop)
+      </cards>
+
+      <inputs>
+        - Rounded borders (border-radius: 8px)
+        - Focus ring: 2px, accent color
+        - Error state: Red border + helper text
+      </inputs>
+
+      <progress_ring>
+        - SVG circle with stroke-dasharray animation
+        - Stroke width: 8px
+        - Smooth transition (duration: 300ms)
+        - Color changes based on session type
+      </progress_ring>
+    </components>
+
+    <animations>
+      - Timer tick: Smooth 1s transitions
+      - Button hover: Scale (1.05) + background shift (150ms)
+      - Tab switch: Slide fade (300ms)
+      - Session change: Color crossfade (500ms)
+      - Task add: Slide up + fade in (200ms)
+      - Notification: Slide down from top (300ms)
+      - Loading: Skeleton pulse (1.5s)
+    </animations>
+  </design_system>
+
+  <data_structures>
+    <storage_keys>
+      <local_storage>
+        - pomodoro_timer_state: { mode, timeRemaining, isRunning, currentSession }
+        - pomodoro_settings: { workDuration, shortBreak, longBreak, sessionsUntilLong, autoStart, soundEnabled, etc }
+        - pomodoro_tasks: [ { id, title, estimatedPomodoros, completedPomodoros, priority, isActive, isCompleted } ]
+        - pomodoro_stats: { totalSessions, totalMinutes, currentStreak, bestStreak, sessionsByDate }
+        - pomodoro_theme: { theme, accentColor }
+      </local_storage>
+      <indexed_db>
+        - pomodoro_session_history: { timestamp, type, duration, taskId, completed }
+      </indexed_db>
+    </storage_keys>
+  </data_structures>
+
+  <user_flows>
+    <flow name="Start First Pomodoro">
+      <step>1. User opens app for first time</step>
+      <step>2. Sees welcome screen with brief tutorial</step>
+      <step>3. Timer displays 25:00 (Work mode)</step>
+      <step>4. User clicks "Start" button</step>
+      <step>5. Timer begins counting down (24:59, 24:58, ...)</step>
+      <step>6. Progress ring animates clockwise</step>
+      <step>7. User can pause/resume anytime</step>
+      <step>8. At 00:00, sound plays, notification shows</step>
+      <step>9. Mode switches to "Short Break" automatically</step>
+      <step>10. Timer resets to 05:00, waits for user to start</step>
+    </flow>
+
+    <flow name="Complete Task with Pomodoros">
+      <step>1. User navigates to Tasks tab</step>
+      <step>2. Enters "Build presentation" in add input</step>
+      <step>3. Sets estimate to 4 pomodoros</step>
+      <step>4. Clicks "Add" button</step>
+      <step>5. Task appears in list with 0/4 progress</step>
+      <step>6. User clicks star icon to make it active</step>
+      <step>7. Returns to Timer tab, sees task above timer</step>
+      <step>8. Completes work session</step>
+      <step>9. Task auto-increments to 1/4 pomodoros</step>
+      <step>10. After 4 sessions, task shows completion checkmark</step>
+    </flow>
+
+    <flow name="View Statistics">
+      <step>1. User completes several pomodoros over the day</step>
+      <step>2. Navigates to Stats tab</step>
+      <step>3. Sees today's stats: 8 sessions, 3h 20min focus time</step>
+      <step>4. Views weekly chart showing Mon-Sun distribution</step>
+      <step>5. Sees current streak: 5 days (fire icon)</step>
+      <step>6. Clicks "Export CSV" to download data</step>
+    </flow>
+
+    <flow name="Customize Settings">
+      <step>1. User navigates to Settings tab</step>
+      <step>2. Changes Work Duration slider to 30 minutes</step>
+      <step>3. Toggles on "Auto-start next session"</step>
+      <step>4. Selects "Bell" sound from dropdown</step>
+      <step>5. Clicks preview button to hear bell</step>
+      <step>6. Changes accent color to purple</step>
+      <step>7. Settings auto-save to LocalStorage</step>
+      <step>8. Timer updates to new duration immediately</step>
+    </flow>
+  </user_flows>
+
+  <implementation_steps>
+    <step number="1">
+      <title>Project Setup and Core Timer</title>
+      <tasks>
+        - Initialize Next.js 14 project with TypeScript
+        - Configure Tailwind CSS
+        - Install dependencies (framer-motion, lucide-react)
+        - Create base layout with tab navigation
+        - Build timer display component (digital MM:SS)
+        - Implement countdown logic (useEffect with setInterval)
+        - Add Start/Pause/Reset/Skip buttons
+        - Implement circular progress ring (SVG)
+        - Add basic state management (Context)
+        - Test timer starts, pauses, resets correctly
+      </tasks>
+    </step>
+
+    <step number="2">
+      <title>Session Management and Auto-switching</title>
+      <tasks>
+        - Implement session types (Work, Short Break, Long Break)
+        - Add session counter and progress indicator
+        - Implement auto-switching logic (Work → Short Break)
+        - Track sessions until long break
+        - Add visual mode indication (color changes)
+        - Implement timer persistence (save/restore from LocalStorage)
+        - Add keyboard shortcuts (Space, R)
+        - Test complete session flow
+      </tasks>
+    </step>
+
+    <step number="3">
+      <title>Settings and Customization</title>
+      <tasks>
+        - Create Settings tab UI
+        - Implement duration sliders (work, breaks)
+        - Add toggle switches (auto-start, notifications)
+        - Implement volume control slider
+        - Add sound selector with preview
+        - Implement theme switcher (light/dark)
+        - Add accent color selector
+        - Connect all settings to LocalStorage
+        - Apply settings changes immediately
+        - Test settings persist across reloads
+      </tasks>
+    </step>
+
+    <step number="4">
+      <title>Notifications and Audio</title>
+      <tasks>
+        - Implement Web Audio API for sound playback
+        - Create or source 3 notification sounds
+        - Add volume control
+        - Implement browser notification (Notification API)
+        - Request notification permissions
+        - Add in-app notification banner
+        - Play sound on timer completion
+        - Show browser notification with session info
+        - Test audio works across browsers
+      </tasks>
+    </step>
+
+    <step number="5">
+      <title>Task Management</title>
+      <tasks>
+        - Create Tasks tab UI
+        - Implement task data structure (LocalStorage)
+        - Build add task input + button
+        - Create task list component
+        - Implement task actions (edit, delete, complete)
+        - Add task priority selector
+        - Implement pomodoro estimate selector
+        - Build task progress bar component
+        - Implement "set active" functionality
+        - Auto-increment task pomodoros on session complete
+        - Clear completed tasks
+        - Test all task CRUD operations
+      </tasks>
+    </step>
+
+    <step number="6">
+      <title>Statistics Dashboard</title>
+      <tasks>
+        - Create Stats tab UI
+        - Implement stats calculation (today, all-time)
+        - Build streak calculation
+        - Create stats cards grid
+        - Implement weekly bar chart (SVG or library)
+        - Add pie chart for distribution
+        - Calculate average sessions per day
+        - Implement CSV export
+        - Add reset stats with confirmation
+        - Update stats automatically after sessions
+      </tasks>
+    </step>
+
+    <step number="7">
+      <title>Visual Polish and Animations</title>
+      <tasks>
+        - Add Framer Motion animations
+        - Implement smooth timer transitions
+        - Add button hover effects
+        - Create color crossfade on mode switch
+        - Add loading/skeleton states
+        - Implement responsive breakpoints
+        - Add accessibility (ARIA labels, keyboard nav)
+        - Polish spacing and typography
+        - Test on mobile and desktop
+      </tasks>
+    </step>
+
+    <step number="8">
+      <title>PWA Features and Offline Support</title>
+      <tasks>
+        - Create PWA manifest
+        - Add app icons
+        - Implement service worker
+        - Test offline functionality
+        - Add install prompt
+        - Test on mobile browsers
+      </tasks>
+    </step>
+  </implementation_steps>
+
+  <success_criteria>
+    <functionality>
+      - Timer counts down accurately in all modes
+      - Sessions auto-switch correctly (work → break → work)
+      - Settings persist and apply correctly
+      - Tasks can be added, edited, deleted
+      - Task pomodoros increment on session complete
+      - Stats calculate correctly from session history
+      - Notifications work and can be toggled
+      - Sounds play at correct volume
+      - App works offline after first load
+    </functionality>
+
+    <user_experience>
+      - Timer is large and easy to read
+      - All controls are intuitive and responsive
+      - Animations are smooth (60fps)
+      - Color changes are pleasant and calming
+      - No jarring transitions or flashes
+      - Mobile layout is touch-friendly
+      - Settings changes apply immediately
+      - Clear visual feedback for all actions
+    </user_experience>
+
+    <technical_quality>
+      - Clean React component structure
+      - Proper TypeScript types
+      - No console errors
+      - Efficient re-renders (React.memo where needed)
+      - LocalStorage error handling
+      - Audio error handling
+      - Proper cleanup of timers/intervals
+    </technical_quality>
+
+    <design_polish>
+      - Beautiful, modern interface
+      - Consistent spacing and alignment
+      - Professional color palette
+      - Smooth animations throughout
+      - Excellent contrast ratios
+      - Polished micro-interactions
+    </design_polish>
+  </success_criteria>
+</project_specification>

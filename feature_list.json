@@ -1,0 +1,812 @@
+{
+  "features": [
+    {
+      "category": "functional",
+      "description": "Timer displays 25:00 on initial load",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify timer shows '25:00' in large font in center of screen",
+        "Verify circular progress ring is full (100%)",
+        "Verify session type label shows 'Work'"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Start button begins countdown from 25:00",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify timer shows '25:00'",
+        "Click 'Start' button (center button with play icon)",
+        "Verify timer changes to '24:59' within 1 second",
+        "Verify button changes to 'Pause' icon"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Pause button stops countdown",
+      "steps": [
+        "Start the timer",
+        "Wait for timer to count down to at least '24:50'",
+        "Click 'Pause' button (center button with pause icon)",
+        "Verify timer stops at current time",
+        "Verify button changes back to 'Play' icon"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Reset button returns timer to full duration",
+      "steps": [
+        "Start the timer",
+        "Wait for timer to count down to at least '24:00'",
+        "Click 'Reset' button (right button with refresh/rotate icon)",
+        "Verify timer resets to '25:00'",
+        "Verify progress ring returns to full (100%)"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Skip button advances to next session type",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify timer shows 'Work' mode",
+        "Click 'Skip' button (left button with forward icon)",
+        "Verify mode changes to 'Short Break'",
+        "Verify timer shows '05:00'"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Timer automatically switches from Work to Short Break",
+      "steps": [
+        "Start timer in Work mode (25:00)",
+        "Wait for timer to reach 00:00",
+        "Verify sound notification plays",
+        "Verify mode switches to 'Short Break'",
+        "Verify timer resets to '05:00'"
+      ],
+      "priority": "high",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Circular progress ring animates smoothly",
+      "steps": [
+        "Start the timer",
+        "Verify progress ring starts at 100% (full circle)",
+        "Observe ring decreases smoothly as timer counts down",
+        "At 12:30 (halfway), verify ring is approximately 50% full",
+        "Verify animation is smooth without stuttering"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Session counter displays correctly",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify session counter shows 'Session 1 of 4'",
+        "Complete first work session (wait for 25:00 → 00:00)",
+        "Verify counter updates to 'Session 2 of 4'",
+        "Complete 4 sessions and verify long break triggers"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Long break triggers after 4 work sessions",
+      "steps": [
+        "Complete 4 work sessions (or use skip to advance)",
+        "After session 4, verify mode switches to 'Long Break'",
+        "Verify timer shows '15:00' (default long break)",
+        "Verify session counter resets to 'Session 1 of 4'"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Color changes based on session type",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify Work mode uses Red/Focus color (#EF4444)",
+        "Switch to Short Break (via skip or completion)",
+        "Verify color changes to Green/Relax (#10B981)",
+        "Switch to Long Break",
+        "Verify color changes to Purple/Deep Rest (#8B5CF6)"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Work duration slider updates timer",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Work Duration' slider (should show 25 by default)",
+        "Drag slider to 30 minutes",
+        "Return to Timer tab",
+        "Verify timer now shows '30:00'"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Short break duration slider updates timer",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Short Break' slider (should show 5 by default)",
+        "Drag slider to 10 minutes",
+        "Skip to Short Break mode",
+        "Verify timer shows '10:00'"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Long break duration slider updates timer",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Long Break' slider (should show 15 by default)",
+        "Drag slider to 20 minutes",
+        "Skip to Long Break mode",
+        "Verify timer shows '20:00'"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Sessions until long break slider works",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Sessions until long break' slider (should show 4)",
+        "Change slider to 2",
+        "Return to Timer tab",
+        "Complete 2 work sessions",
+        "Verify long break triggers after 2 sessions"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Auto-start toggle automatically begins next session",
+      "steps": [
+        "Navigate to Settings tab",
+        "Toggle 'Auto-start next session' to ON",
+        "Return to Timer tab and start work session",
+        "Wait for work session to complete (25:00 → 00:00)",
+        "Verify short break starts automatically without user input"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Sound notifications toggle mutes completion sound",
+      "steps": [
+        "Navigate to Settings tab",
+        "Toggle 'Sound notifications' to OFF",
+        "Return to Timer tab and start session",
+        "Wait for timer to complete (25:00 → 00:00)",
+        "Verify no sound plays"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Volume slider adjusts notification sound volume",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Volume' slider (should show 50% by default)",
+        "Drag slider to 100%",
+        "Click 'Preview Sound' button",
+        "Verify sound plays at loud volume",
+        "Drag slider to 10%",
+        "Click 'Preview Sound' again",
+        "Verify sound plays at very low volume"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Sound selector changes notification sound",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Notification Sound' dropdown",
+        "Select 'Chime' option",
+        "Click 'Preview Sound' button",
+        "Verify gentle chime sound plays",
+        "Change dropdown to 'Gong'",
+        "Click 'Preview Sound'",
+        "Verify deep gong sound plays"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Browser notifications toggle requests permission",
+      "steps": [
+        "Navigate to Settings tab",
+        "Toggle 'Browser notifications' to ON",
+        "Verify browser permission dialog appears",
+        "Click 'Allow' on permission dialog",
+        "Verify toggle stays ON",
+        "Verify notification permission granted message appears"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Browser notification appears on timer completion",
+      "steps": [
+        "Enable browser notifications in settings",
+        "Return to Timer tab and start session",
+        "Wait for timer to complete (25:00 → 00:00)",
+        "Verify browser notification appears",
+        "Verify notification shows session type (Work completed)",
+        "Verify notification shows custom message"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Theme switcher changes light/dark mode",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Theme' dropdown/selector",
+        "Select 'Dark'",
+        "Verify background changes to dark slate (#1F2937)",
+        "Verify text changes to off-white (#F9FAFB)",
+        "Select 'Light'",
+        "Verify background changes to warm gray (#F9FAFB)"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Accent color selector changes UI colors",
+      "steps": [
+        "Navigate to Settings tab",
+        "Locate 'Accent Color' color picker (5 preset colors)",
+        "Select Purple color",
+        "Return to Timer tab",
+        "Verify primary buttons use purple color",
+        "Verify focus rings use purple color"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Settings persist across page reloads",
+      "steps": [
+        "Navigate to Settings tab",
+        "Change Work Duration to 30 minutes",
+        "Change theme to Dark",
+        "Reload page (F5 or Ctrl+R)",
+        "Return to Settings tab",
+        "Verify Work Duration still shows 30 minutes",
+        "Verify theme is still Dark"
+      ],
+      "priority": "high",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Add task creates new task in list",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Locate 'Add task' input at top of page",
+        "Type 'Build presentation' in input",
+        "Click 'Add' button (or press Enter)",
+        "Verify task appears in task list below",
+        "Verify task shows title 'Build presentation'"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Task priority can be set",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Click 'Add task' input",
+        "Locate priority selector (High/Medium/Low)",
+        "Select 'High' priority",
+        "Type task name and click Add",
+        "Verify task shows red 'High' badge"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Task pomodoro estimate can be set",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Click 'Add task' input",
+        "Locate 'Estimated Pomodoros' selector (number 1-10)",
+        "Set estimate to 4 pomodoros",
+        "Type task name and click Add",
+        "Verify task shows '0/4' progress"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Delete task removes task from list",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create a test task",
+        "Locate trash/delete icon button on task card",
+        "Click delete button",
+        "Verify confirmation dialog appears",
+        "Confirm deletion",
+        "Verify task is removed from list"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Edit task modifies task title",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create a test task 'Original title'",
+        "Click pencil/edit icon on task card",
+        "Verify edit mode activates (input appears with current text)",
+        "Change text to 'Updated title'",
+        "Click save or press Enter",
+        "Verify task now shows 'Updated title'"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Mark task as active sets it as current task",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create 2-3 tasks",
+        "Click star icon on second task",
+        "Verify star becomes filled/yellow",
+        "Navigate to Timer tab",
+        "Verify active task displays above timer"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Mark task complete shows completion status",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create a task",
+        "Click checkmark/complete icon on task",
+        "Verify task shows strikethrough text",
+        "Verify checkmark becomes filled",
+        "Verify task is grayed out or moved to completed section"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Task progress bar updates on session complete",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create task with 4 pomodoro estimate",
+        "Mark task as active (star icon)",
+        "Navigate to Timer tab and complete work session",
+        "Return to Tasks tab",
+        "Verify task progress now shows '1/4'",
+        "Verify progress bar is 25% filled"
+      ],
+      "priority": "high",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Task auto-completes when all pomodoros done",
+      "steps": [
+        "Create task with 2 pomodoro estimate",
+        "Complete 2 work sessions with this task active",
+        "Verify task progress shows '2/2'",
+        "Verify task automatically marks as complete",
+        "Verify checkmark is filled"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Clear completed tasks removes finished tasks",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create and complete 2-3 tasks",
+        "Locate 'Clear completed' button at bottom of list",
+        "Click button",
+        "Verify completed tasks are removed from list",
+        "Verify active/incomplete tasks remain"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Task filter shows only active tasks",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create 3 tasks, complete 1 of them",
+        "Click 'Active' filter button",
+        "Verify only incomplete tasks are shown",
+        "Verify completed task is hidden"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Task filter shows only completed tasks",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create 3 tasks, complete 1 of them",
+        "Click 'Completed' filter button",
+        "Verify only completed task is shown",
+        "Verify active tasks are hidden"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Tasks persist across page reloads",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create 2-3 tasks",
+        "Reload page (F5 or Ctrl+R)",
+        "Return to Tasks tab",
+        "Verify all tasks are still present",
+        "Verify task details (title, estimates, status) are preserved"
+      ],
+      "priority": "high",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Stats tab shows today's session count",
+      "steps": [
+        "Complete 3 work sessions",
+        "Navigate to Stats tab",
+        "Locate 'Today's Sessions' stat card",
+        "Verify number shows 3"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Stats tab shows today's focus time",
+      "steps": [
+        "Complete 3 work sessions (3 × 25min = 75min)",
+        "Navigate to Stats tab",
+        "Locate 'Focus Time Today' stat card",
+        "Verify time shows '1h 15min' or '75min'"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Stats tab shows current streak",
+      "steps": [
+        "Complete at least 1 pomodoro today",
+        "Navigate to Stats tab",
+        "Locate 'Current Streak' stat card",
+        "Verify number shows consecutive days with ≥1 pomodoro",
+        "Verify fire icon appears next to streak"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Stats tab shows all-time total sessions",
+      "steps": [
+        "Complete multiple sessions over several days",
+        "Navigate to Stats tab",
+        "Locate 'Total Sessions' stat card",
+        "Verify number shows all-time count of completed sessions"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Weekly chart shows sessions per day",
+      "steps": [
+        "Complete sessions over past 7 days",
+        "Navigate to Stats tab",
+        "Locate weekly bar chart",
+        "Verify chart shows 7 bars (Mon-Sun)",
+        "Verify bar heights correspond to session counts",
+        "Verify today's bar is highlighted or accent-colored"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Pie chart shows session type distribution",
+      "steps": [
+        "Complete work and break sessions",
+        "Navigate to Stats tab",
+        "Locate pie chart showing 'Work vs Break'",
+        "Verify chart shows two segments",
+        "Verify segments are proportional to session counts"
+      ],
+      "priority": "low",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Export stats downloads CSV file",
+      "steps": [
+        "Navigate to Stats tab",
+        "Complete at least 1 session",
+        "Click 'Export CSV' button",
+        "Verify CSV file downloads",
+        "Open CSV file and verify it contains session data",
+        "Verify columns: timestamp, type, duration, date"
+      ],
+      "priority": "low",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Reset stats clears all statistics",
+      "steps": [
+        "Navigate to Stats tab",
+        "Click 'Reset Stats' button",
+        "Verify confirmation dialog appears",
+        "Confirm reset",
+        "Verify all stats return to zero",
+        "Verify charts are empty"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Stats update automatically after session",
+      "steps": [
+        "Navigate to Stats tab and note current session count",
+        "Navigate to Timer tab and complete 1 session",
+        "Return to Stats tab",
+        "Verify session count increased by 1",
+        "Verify charts updated without manual refresh"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Tab navigation switches between Timer/Tasks/Stats/Settings",
+      "steps": [
+        "Navigate to localhost:3000",
+        "Verify Timer tab is active by default",
+        "Click 'Tasks' tab (bottom or side nav)",
+        "Verify Tasks content appears",
+        "Click 'Stats' tab",
+        "Verify Stats content appears",
+        "Click 'Settings' tab",
+        "Verify Settings content appears"
+      ],
+      "priority": "high",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Keyboard shortcut Space starts/pauses timer",
+      "steps": [
+        "Navigate to Timer tab",
+        "Press Space key",
+        "Verify timer starts (if paused) or pauses (if running)",
+        "Press Space again",
+        "Verify timer toggles opposite state"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Keyboard shortcut R resets timer",
+      "steps": [
+        "Navigate to Timer tab and start timer",
+        "Wait for timer to count down to 24:00",
+        "Press R key",
+        "Verify timer resets to 25:00",
+        "Verify progress ring returns to full"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Timer state persists across page reload",
+      "steps": [
+        "Start timer in Work mode",
+        "Wait for timer to reach 20:00",
+        "Reload page (F5 or Ctrl+R)",
+        "Verify timer shows 20:00 (or close to it)",
+        "Verify timer is still running",
+        "Verify progress ring matches remaining time"
+      ],
+      "priority": "high",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Empty task list shows helpful message",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Delete all existing tasks",
+        "Verify empty state illustration appears",
+        "Verify 'No tasks yet' message displays",
+        "Verify 'Add your first task to get started' text appears"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "style",
+      "description": "Timer display uses large monospace font",
+      "steps": [
+        "Navigate to Timer tab",
+        "Observe timer numbers (25:00)",
+        "Verify font is monospace (fixed width, all digits same width)",
+        "Verify font size is large (80px on desktop, 48px on mobile)",
+        "Verify numbers are easy to read"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "style",
+      "description": "Buttons have hover effects",
+      "steps": [
+        "Navigate to Timer tab",
+        "Hover over Start/Pause button",
+        "Verify button scales up slightly (1.05x)",
+        "Verify background color shifts",
+        "Verify transition is smooth (150ms)",
+        "Test hover on Skip and Reset buttons"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "style",
+      "description": "Session color transition is smooth",
+      "steps": [
+        "Navigate to Timer tab",
+        "Start Work session (red color)",
+        "Wait for session to complete",
+        "Verify color crossfades from red to green (short break)",
+        "Verify transition duration is ~500ms",
+        "Verify no jarring color flashes"
+      ],
+      "priority": "low",
+      "complexity": "medium"
+    },
+    {
+      "category": "style",
+      "description": "Task cards have proper spacing and shadows",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create 3 tasks",
+        "Verify each task is in a separate card",
+        "Verify cards have 8px gap between them",
+        "Verify cards have subtle shadow",
+        "Hover over a card",
+        "Verify shadow increases on hover"
+      ],
+      "priority": "low",
+      "complexity": "simple"
+    },
+    {
+      "category": "style",
+      "description": "Mobile layout is responsive",
+      "steps": [
+        "Open browser DevTools (F12)",
+        "Enable mobile device emulation (iPhone 12, 375px width)",
+        "Navigate to Timer tab",
+        "Verify timer numbers scale down (48px)",
+        "Verify buttons stack vertically or remain in row",
+        "Verify no horizontal scrolling",
+        "Test all tabs on mobile"
+      ],
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "category": "style",
+      "description": "Dark mode has proper contrast",
+      "steps": [
+        "Navigate to Settings tab",
+        "Select 'Dark' theme",
+        "Verify background is dark slate (#1F2937)",
+        "Verify text is off-white (#F9FAFB)",
+        "Verify text is readable (contrast ratio ≥ 4.5:1)",
+        "Verify cards are dark gray (#374151)"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Active task displays above timer",
+      "steps": [
+        "Navigate to Tasks tab",
+        "Create a task and mark as active (star icon)",
+        "Navigate to Timer tab",
+        "Verify task title appears above timer",
+        "Verify task title is clearly visible",
+        "Verify task pomodoro progress shows (e.g., '0/4')"
+      ],
+      "priority": "medium",
+      "complexity": "simple"
+    },
+    {
+      "category": "functional",
+      "description": "Prompt to select task when starting work session",
+      "steps": [
+        "Ensure no task is marked as active",
+        "Navigate to Timer tab",
+        "Click Start button",
+        "Verify prompt/dialog appears: 'Select a task to work on'",
+        "Verify dialog shows list of tasks",
+        "Select a task from list",
+        "Verify dialog closes and timer starts"
+      ],
+      "priority": "low",
+      "complexity": "medium"
+    },
+    {
+      "category": "functional",
+      "description": "Page Visibility API pauses timer when tab hidden",
+      "steps": [
+        "Start timer in Work mode",
+        "Switch to different browser tab or minimize window",
+        "Wait 5 seconds",
+        "Return to Pomodoro tab",
+        "Verify timer has paused or adjusted elapsed time",
+        "Verify time matches actual elapsed time (not slowed down)"
+      ],
+      "priority": "low",
+      "complexity": "medium"
+    }
+  ]
+}
