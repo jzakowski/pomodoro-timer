@@ -1,10 +1,15 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useTimer } from '@/lib/timerContext'
+import { useTasks } from '@/lib/taskContext'
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react'
+import TaskSelectionDialog from './TaskSelectionDialog'
 
 export default function TimerTab() {
   const { mode, timeRemaining, isRunning, startTimer, pauseTimer, resetTimer, skipSession } = useTimer()
+  const { tasks, setActiveTask } = useTasks()
+  const [showTaskDialog, setShowTaskDialog] = useState(false)
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -36,6 +41,50 @@ export default function TimerTab() {
 
   const totalDuration = mode === 'work' ? 25 * 60 : mode === 'shortBreak' ? 5 * 60 : 15 * 60
   const progress = ((totalDuration - timeRemaining) / totalDuration) * 100
+
+  // Check if there's an active task
+  const activeTask = tasks.find((task) => task.isActive)
+
+  // Handle start button click
+  const handleStart = () => {
+    // Only prompt for task selection in work mode
+    if (mode === 'work' && !activeTask && !isRunning) {
+      const availableTasks = tasks.filter((task) => !task.isCompleted && task.title.trim() !== '')
+      if (availableTasks.length > 0) {
+        setShowTaskDialog(true)
+        return
+      }
+    }
+    startTimer()
+  }
+
+  // Handle task selection from dialog
+  const handleSelectTask = (taskId: string) => {
+    setActiveTask(taskId)
+    setShowTaskDialog(false)
+    // Auto-start timer after selecting task
+    startTimer()
+  }
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (isRunning) {
+          pauseTimer()
+        } else {
+          handleStart()
+        }
+      } else if (e.code === 'KeyR') {
+        e.preventDefault()
+        resetTimer()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [isRunning, mode, activeTask, tasks, startTimer, pauseTimer, resetTimer])
 
   return (
     <div className="flex flex-col items-center justify-center space-y-8">
@@ -86,7 +135,7 @@ export default function TimerTab() {
         </button>
 
         <button
-          onClick={isRunning ? pauseTimer : startTimer}
+          onClick={isRunning ? pauseTimer : handleStart}
           className={`p-6 rounded-full ${
             isRunning
               ? 'bg-yellow-500 hover:bg-yellow-600'
@@ -114,6 +163,40 @@ export default function TimerTab() {
       <div className="text-center text-sm text-gray-600 dark:text-gray-400">
         <p>Press Space to start/pause • Press R to reset</p>
       </div>
+
+      {/* Active Task Display */}
+      {activeTask && mode === 'work' && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md max-w-md">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Working on</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                {activeTask.title}
+              </h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {activeTask.completedPomodoros} / {activeTask.estimatedPomodoros} pomodoros
+                </span>
+                <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div
+                    className="bg-red-500 dark:bg-red-400 h-full rounded-full"
+                    style={{
+                      width: `${(activeTask.completedPomodoros / activeTask.estimatedPomodoros) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Task Selection Dialog */}
+      <TaskSelectionDialog
+        isOpen={showTaskDialog}
+        onClose={() => setShowTaskDialog(false)}
+        onSelectTask={handleSelectTask}
+      />
     </div>
   )
 }
