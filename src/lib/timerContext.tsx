@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
+import { useSettings } from './settingsContext'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -21,18 +22,25 @@ interface TimerContextType extends TimerState {
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined)
 
-const DEFAULT_DURATIONS = {
-  work: 25 * 60, // 25 minutes in seconds
-  shortBreak: 5 * 60, // 5 minutes
-  longBreak: 15 * 60, // 15 minutes
-}
-
 export function TimerProvider({ children }: { children: ReactNode }) {
+  const settings = useSettings()
   const [mode, setMode] = useState<SessionType>('work')
-  const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
+  const [timeRemaining, setTimeRemaining] = useState(settings.workDuration * 60)
   const [isRunning, setIsRunning] = useState(false)
   const [currentSession, setCurrentSession] = useState(1)
-  const [sessionsUntilLong] = useState(4)
+  const [sessionsUntilLong] = useState(settings.sessionsUntilLong)
+
+  // Calculate durations from settings
+  const getDuration = (sessionType: SessionType): number => {
+    switch (sessionType) {
+      case 'work':
+        return settings.workDuration * 60
+      case 'shortBreak':
+        return settings.shortBreakDuration * 60
+      case 'longBreak':
+        return settings.longBreakDuration * 60
+    }
+  }
 
   // Track session completion to avoid duplicate recordings
   const sessionCompletedRef = useRef(false)
@@ -63,19 +71,19 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval)
   }, [isRunning])
 
-  // Update timer duration when mode changes
+  // Update timer duration when mode or settings change
   useEffect(() => {
     if (!isRunning) {
-      setTimeRemaining(DEFAULT_DURATIONS[mode])
+      setTimeRemaining(getDuration(mode))
     }
-  }, [mode, isRunning])
+  }, [mode, isRunning, settings.workDuration, settings.shortBreakDuration, settings.longBreakDuration])
 
   const startTimer = () => setIsRunning(true)
   const pauseTimer = () => setIsRunning(false)
 
   const resetTimer = () => {
     setIsRunning(false)
-    setTimeRemaining(DEFAULT_DURATIONS[mode])
+    setTimeRemaining(getDuration(mode))
   }
 
   const skipSession = () => {
@@ -101,7 +109,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       // Record session completion in localStorage for stats to pick up
       const sessionData = {
         type: mode,
-        duration: DEFAULT_DURATIONS[mode],
+        duration: getDuration(mode),
         timestamp: Date.now(),
       }
 
