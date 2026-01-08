@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { TimerProvider } from '@/lib/timerContext'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Pomodoro Timer',
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <TimerProvider>{children}</TimerProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
