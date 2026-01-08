@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --work-color: #EF4444;
+  --short-break-color: #10B981;
+  --long-break-color: #8B5CF6;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
