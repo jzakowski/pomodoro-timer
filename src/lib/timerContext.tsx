@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
+import { playCompletionSound } from '@/lib/soundUtils'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -97,6 +98,9 @@ export function TimerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (timeRemaining === 0 && !sessionCompletedRef.current) {
       sessionCompletedRef.current = true
+
+      // Play completion sound
+      playCompletionSound()
 
       // Record session completion in localStorage for stats to pick up
       const sessionData = {
