@@ -1,0 +1,188 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useTimer } from '@/lib/timerContext'
+
+export default function TimerDisplay() {
+  const { timeRemaining, mode, isRunning, startTimer, pauseTimer, resetTimer, skipSession } = useTimer()
+  const [isKeyPressed, setIsKeyPressed] = useState(false)
+
+  // Keyboard shortcut: Space to toggle timer
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only trigger Space key if not focusing on an input/button
+      if (event.code === 'Space' &&
+          !(event.target instanceof HTMLInputElement ||
+            event.target instanceof HTMLButtonElement ||
+            event.target instanceof HTMLTextAreaElement)) {
+        event.preventDefault() // Prevent page scroll
+        setIsKeyPressed(true)
+        if (isRunning) {
+          pauseTimer()
+        } else {
+          startTimer()
+        }
+      }
+
+      // Keyboard shortcut: R to reset timer
+      if (event.code === 'KeyR' &&
+          !(event.target instanceof HTMLInputElement ||
+            event.target instanceof HTMLButtonElement ||
+            event.target instanceof HTMLTextAreaElement)) {
+        event.preventDefault()
+        resetTimer()
+      }
+    }
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.code === 'Space') {
+        setIsKeyPressed(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [isRunning, startTimer, pauseTimer, resetTimer])
+
+  // Convert seconds to MM:SS format
+  const minutes = Math.floor(timeRemaining / 60)
+  const seconds = timeRemaining % 60
+  const displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+
+  // Calculate progress for circular ring
+  const DEFAULT_DURATIONS = {
+    work: 25 * 60,
+    shortBreak: 5 * 60,
+    longBreak: 15 * 60,
+  }
+  const totalTime = DEFAULT_DURATIONS[mode]
+  const progress = (totalTime - timeRemaining) / totalTime
+  const circumference = 2 * Math.PI * 135 // radius = 135
+  const strokeDashoffset = circumference * (1 - progress)
+
+  // Color based on session type
+  const colors = {
+    work: '#EF4444',      // Focus Red
+    shortBreak: '#10B981', // Relax Green
+    longBreak: '#8B5CF6',  // Deep Purple
+  }
+
+  const currentColor = colors[mode]
+
+  return (
+    <div className="flex flex-col items-center justify-center">
+      {/* Circular Timer */}
+      <div className="relative mb-8">
+        <svg
+          className="transform -rotate-90"
+          width="300"
+          height="300"
+          viewBox="0 0 300 300"
+        >
+          {/* Background circle */}
+          <circle
+            cx="150"
+            cy="150"
+            r="135"
+            stroke="currentColor"
+            strokeWidth="8"
+            fill="none"
+            className="text-gray-200 dark:text-gray-700"
+          />
+
+          {/* Progress circle */}
+          <circle
+            cx="150"
+            cy="150"
+            r="135"
+            stroke={currentColor}
+            strokeWidth="8"
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            style={{
+              transition: 'stroke-dashoffset 0.3s ease, stroke 0.5s ease',
+            }}
+          />
+        </svg>
+
+        {/* Time display in center */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-7xl md:text-8xl font-mono font-bold text-gray-900 dark:text-white tabular-nums">
+            {displayTime}
+          </span>
+          <span className="mt-2 text-lg capitalize text-gray-600 dark:text-gray-400">
+            {mode === 'shortBreak' ? 'Short Break' : mode === 'longBreak' ? 'Long Break' : 'Work'}
+          </span>
+        </div>
+      </div>
+
+      {/* Control Buttons */}
+      <div className="flex items-center gap-4">
+        {/* Skip Button */}
+        <button
+          onClick={skipSession}
+          className="p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-150 hover:scale-105"
+          aria-label="Skip session"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-700 dark:text-gray-300">
+            <path d="M21 4v16"></path>
+            <path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z"></path>
+          </svg>
+        </button>
+
+        {/* Start/Pause Button */}
+        <button
+          onClick={isRunning ? pauseTimer : startTimer}
+          className={`p-6 rounded-full text-white transition-all duration-150 hover:scale-105 shadow-lg hover:shadow-xl ${
+            isKeyPressed ? 'scale-95' : ''
+          }`}
+          style={{ backgroundColor: isRunning ? '#F59E0B' : '#EF4444' }}
+          aria-label={isRunning ? 'Pause timer' : 'Start timer'}
+        >
+          {isRunning ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+              <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path>
+            </svg>
+          )}
+        </button>
+
+        {/* Reset Button */}
+        <button
+          onClick={resetTimer}
+          className="p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-150 hover:scale-105"
+          aria-label="Reset timer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-700 dark:text-gray-300">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+        </button>
+      </div>
+
+      {/* Keyboard shortcuts hint */}
+      <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
+        <span className="inline-flex items-center gap-1">
+          <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">Space</kbd>
+          <span>to start/pause</span>
+        </span>
+        <span className="mx-2">•</span>
+        <span className="inline-flex items-center gap-1">
+          <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">R</kbd>
+          <span>to reset</span>
+        </span>
+      </div>
+    </div>
+  )
+}
