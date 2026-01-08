@@ -33,8 +33,8 @@ export default function TasksTab() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Add Task Input */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-md mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Add Task
         </h2>
         <div className="flex flex-col gap-3">
@@ -46,7 +46,7 @@ export default function TasksTab() {
             placeholder="What are you working on?"
             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
           />
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <select
               value={estimatedPomodoros}
               onChange={(e) => setEstimatedPomodoros(Number(e.currentTarget.value))}
@@ -69,7 +69,7 @@ export default function TasksTab() {
             </select>
             <button
               onClick={handleAddTask}
-              className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150 flex items-center gap-2 font-medium"
+              className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150 flex items-center justify-center gap-2 font-medium"
             >
               <Plus className="w-5 h-5" />
               Add
@@ -81,8 +81,8 @@ export default function TasksTab() {
       {/* Task List */}
       <div className="space-y-3">
         {tasks.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-12 shadow-md text-center">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 sm:p-12 shadow-md text-center">
+            <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg">
               No tasks yet. Add one above to get started! 📝
             </p>
           </div>
@@ -90,13 +90,13 @@ export default function TasksTab() {
           tasks.map((task) => (
             <div
               key={task.id}
-              className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200"
+              className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-5 shadow-md hover:shadow-lg transition-shadow duration-200"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 {/* Active Star */}
                 <button
                   onClick={() => setActiveTask(task.id)}
-                  className={`mt-1 transition-colors duration-150 ${
+                  className={`mt-1 transition-colors duration-150 shrink-0 ${
                     task.isActive ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-500'
                   }`}
                   aria-label="Set as active"
@@ -108,7 +108,7 @@ export default function TasksTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <h3
-                      className={`text-lg font-semibold ${
+                      className={`text-base sm:text-lg font-semibold ${
                         task.isCompleted
                           ? 'text-gray-400 line-through'
                           : 'text-gray-900 dark:text-white'
@@ -127,10 +127,10 @@ export default function TasksTab() {
 
                   {/* Progress Bar */}
                   <div className="mb-3">
-                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    <div className="flex justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">
                       <span>Progress</span>
                       <span>
-                        {task.completedPomodoros} / {task.estimatedPomodoros} pomodoros
+                        {task.completedPomodoros} / {task.estimatedPomodoros}
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
@@ -144,7 +144,7 @@ export default function TasksTab() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => toggleTaskComplete(task.id)}
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center gap-1 ${
@@ -154,7 +154,8 @@ export default function TasksTab() {
                       }`}
                     >
                       <Check className="w-4 h-4" />
-                      {task.isCompleted ? 'Completed' : 'Mark Complete'}
+                      <span className="hidden sm:inline">{task.isCompleted ? 'Completed' : 'Mark Complete'}</span>
+                      <span className="sm:hidden">Complete</span>
                     </button>
                     <button
                       onClick={() => deleteTask(task.id)}

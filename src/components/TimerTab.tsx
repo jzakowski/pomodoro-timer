@@ -38,15 +38,15 @@ export default function TimerTab() {
   const progress = ((totalDuration - timeRemaining) / totalDuration) * 100
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-8">
+    <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8">
       {/* Timer Display */}
       <div className="relative">
-        <svg className="w-72 h-72 transform -rotate-90">
+        <svg className="w-64 h-64 sm:w-72 sm:h-72 transform -rotate-90">
           {/* Background circle */}
           <circle
-            cx="144"
-            cy="144"
-            r="120"
+            cx="128"
+            cy="128"
+            r="108"
             stroke="currentColor"
             strokeWidth="8"
             fill="none"
@@ -54,40 +54,40 @@ export default function TimerTab() {
           />
           {/* Progress circle */}
           <circle
-            cx="144"
-            cy="144"
-            r="120"
+            cx="128"
+            cy="128"
+            r="108"
             stroke="currentColor"
             strokeWidth="8"
             fill="none"
-            strokeDasharray={`${2 * Math.PI * 120}`}
-            strokeDashoffset={`${2 * Math.PI * 120 * (1 - progress / 100)}`}
+            strokeDasharray={`${2 * Math.PI * 108}`}
+            strokeDashoffset={`${2 * Math.PI * 108 * (1 - progress / 100)}`}
             className={`transition-all duration-300 ${getModeColor()}`}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className={`text-7xl font-bold font-mono ${getModeColor()}`}>
+          <p className={`text-5xl sm:text-6xl md:text-7xl font-bold font-mono ${getModeColor()}`}>
             {formatTime(timeRemaining)}
           </p>
-          <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mt-2">
+          <p className="text-base sm:text-lg font-medium text-gray-700 dark:text-gray-300 mt-2">
             {getModeLabel()}
           </p>
         </div>
       </div>
 
       {/* Control Buttons */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <button
           onClick={skipSession}
-          className="p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
+          className="p-3 sm:p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
           aria-label="Skip session"
         >
-          <SkipForward className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+          <SkipForward className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
         </button>
 
         <button
           onClick={isRunning ? pauseTimer : startTimer}
-          className={`p-6 rounded-full ${
+          className={`p-5 sm:p-6 rounded-full ${
             isRunning
               ? 'bg-yellow-500 hover:bg-yellow-600'
               : 'bg-red-500 hover:bg-red-600'
@@ -95,23 +95,23 @@ export default function TimerTab() {
           aria-label={isRunning ? 'Pause timer' : 'Start timer'}
         >
           {isRunning ? (
-            <Pause className="w-8 h-8" />
+            <Pause className="w-7 h-7 sm:w-8 sm:h-8" />
           ) : (
-            <Play className="w-8 h-8 ml-1" />
+            <Play className="w-7 h-7 sm:w-8 sm:h-8 ml-1" />
           )}
         </button>
 
         <button
           onClick={resetTimer}
-          className="p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
+          className="p-3 sm:p-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
           aria-label="Reset timer"
         >
-          <RotateCcw className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+          <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
         </button>
       </div>
 
       {/* Instructions */}
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+      <div className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400 px-4">
         <p>Press Space to start/pause • Press R to reset</p>
       </div>
     </div>

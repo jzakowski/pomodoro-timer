@@ -50,32 +50,32 @@ export default function StatsTab() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Statistics
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           Track your productivity over time
         </p>
       </div>
 
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {statsCards.map((card) => {
           const Icon = card.icon
           return (
             <div
               key={card.title}
-              className={`${card.bgColor} rounded-xl p-4 border border-gray-200 dark:border-gray-700`}
+              className={`${card.bgColor} rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700`}
             >
               <div className="flex items-center gap-2 mb-2">
-                <Icon className={`w-5 h-5 ${card.color}`} />
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${card.color}`} />
+                <p className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                   {card.title}
                 </p>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 {card.value}
               </p>
             </div>
@@ -84,17 +84,17 @@ export default function StatsTab() {
       </div>
 
       {/* Additional Stats Info */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
           All-Time Best
         </h3>
-        <div className="flex items-center gap-4">
-          <Flame className="w-8 h-8 text-orange-500" />
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500" />
           <div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {bestStreak} days
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               Best streak
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function StatsTab() {
       </div>
 
       {/* Auto-update indicator */}
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
         <p>Stats update automatically after each session</p>
       </div>
     </div>
