@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
+type Theme = 'light' | 'dark' | 'system'
+
 interface SettingsState {
   workDuration: number // in minutes
   shortBreakDuration: number // in minutes
@@ -9,6 +11,7 @@ interface SettingsState {
   sessionsUntilLong: number
   autoStart: boolean
   soundEnabled: boolean
+  theme: Theme
 }
 
 interface SettingsContextType extends SettingsState {
@@ -18,6 +21,7 @@ interface SettingsContextType extends SettingsState {
   setSessionsUntilLong: (count: number) => void
   setAutoStart: (enabled: boolean) => void
   setSoundEnabled: (enabled: boolean) => void
+  setTheme: (theme: Theme) => void
   resetSettings: () => void
 }
 
@@ -32,6 +36,7 @@ const DEFAULT_SETTINGS: SettingsState = {
   sessionsUntilLong: 4,
   autoStart: false,
   soundEnabled: true,
+  theme: 'system',
 }
 
 const loadSettingsFromStorage = (): SettingsState => {
@@ -73,6 +78,31 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setIsLoaded(true)
   }, [])
 
+  // Apply theme changes to document
+  useEffect(() => {
+    if (typeof window === 'undefined' || !isLoaded) return
+
+    const root = document.documentElement
+    const applyTheme = (theme: Theme) => {
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        root.classList.toggle('dark', systemTheme === 'dark')
+      } else {
+        root.classList.toggle('dark', theme === 'dark')
+      }
+    }
+
+    applyTheme(settings.theme)
+
+    // Listen for system theme changes if using system theme
+    if (settings.theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const handler = () => applyTheme('system')
+      mediaQuery.addEventListener('change', handler)
+      return () => mediaQuery.removeEventListener('change', handler)
+    }
+  }, [settings.theme, isLoaded])
+
   // Save settings whenever they change (after initial load)
   useEffect(() => {
     if (isLoaded) {
@@ -104,6 +134,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setSettings((prev) => ({ ...prev, soundEnabled: enabled }))
   }
 
+  const setTheme = (theme: Theme) => {
+    setSettings((prev) => ({ ...prev, theme }))
+  }
+
   const resetSettings = () => {
     setSettings(DEFAULT_SETTINGS)
   }
@@ -116,6 +150,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setSessionsUntilLong,
     setAutoStart,
     setSoundEnabled,
+    setTheme,
     resetSettings,
   }
 

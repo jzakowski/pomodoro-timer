@@ -1,6 +1,7 @@
 'use client'
 
 import { useSettings } from '@/lib/settingsContext'
+import { Sun, Moon, Monitor } from 'lucide-react'
 
 export default function SettingsTab() {
   const {
@@ -10,7 +11,15 @@ export default function SettingsTab() {
     setShortBreakDuration,
     longBreakDuration,
     setLongBreakDuration,
+    theme,
+    setTheme,
   } = useSettings()
+
+  const themes = [
+    { value: 'light' as const, label: 'Light', icon: Sun },
+    { value: 'dark' as const, label: 'Dark', icon: Moon },
+    { value: 'system' as const, label: 'System', icon: Monitor },
+  ]
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -21,6 +30,40 @@ export default function SettingsTab() {
         <p className="text-gray-600 dark:text-gray-400">
           Customize your Pomodoro experience
         </p>
+      </div>
+
+      {/* Appearance */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Appearance
+        </h3>
+
+        {/* Theme Selector */}
+        <div>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 block">
+            Theme
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            {themes.map(({ value, label, icon: Icon }) => (
+              <button
+                key={value}
+                onClick={() => setTheme(value)}
+                className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all duration-150 ${
+                  theme === value
+                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                }`}
+                aria-label={`Select ${label} theme`}
+                aria-pressed={theme === value}
+              >
+                <Icon className={`w-6 h-6 ${theme === value ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'}`} />
+                <span className={`text-sm font-medium ${theme === value ? 'text-red-500' : 'text-gray-700 dark:text-gray-300'}`}>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Timer Durations */}
