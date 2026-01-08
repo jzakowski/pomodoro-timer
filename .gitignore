@@ -50,3 +50,4 @@ tests/verification/
 
 # OS
 Thumbs.db
+debug_*.js
