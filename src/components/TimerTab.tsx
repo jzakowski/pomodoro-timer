@@ -62,11 +62,11 @@ export default function TimerTab() {
             fill="none"
             strokeDasharray={`${2 * Math.PI * 120}`}
             strokeDashoffset={`${2 * Math.PI * 120 * (1 - progress / 100)}`}
-            className={`transition-all duration-300 ${getModeColor()}`}
+            className={`transition-all duration-500 ${getModeColor()}`}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className={`text-7xl font-bold font-mono ${getModeColor()}`}>
+          <p className={`text-7xl font-bold font-mono transition-colors duration-500 ${getModeColor()}`}>
             {formatTime(timeRemaining)}
           </p>
           <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mt-2">
