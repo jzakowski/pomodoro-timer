@@ -1,6 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
+import { useStats } from './statsContext'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -28,11 +29,15 @@ const DEFAULT_DURATIONS = {
 }
 
 export function TimerProvider({ children }: { children: ReactNode }) {
+  const { addSession } = useStats()
   const [mode, setMode] = useState<SessionType>('work')
   const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
   const [isRunning, setIsRunning] = useState(false)
   const [currentSession, setCurrentSession] = useState(1)
   const [sessionsUntilLong] = useState(4)
+
+  // Track initial time for session recording
+  const initialTimeRef = useRef<number>(DEFAULT_DURATIONS.work)
 
   // Timer countdown effect
   useEffect(() => {
@@ -41,6 +46,10 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
+          // Timer completed - record the session
+          const duration = initialTimeRef.current - prev
+          addSession(mode, duration)
+
           setIsRunning(false)
           return 0
         }
@@ -49,21 +58,31 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [isRunning])
+  }, [isRunning, mode, addSession])
 
   // Update timer duration when mode changes
   useEffect(() => {
     if (!isRunning) {
-      setTimeRemaining(DEFAULT_DURATIONS[mode])
+      const newDuration = DEFAULT_DURATIONS[mode]
+      setTimeRemaining(newDuration)
+      initialTimeRef.current = newDuration
     }
   }, [mode, isRunning])
 
-  const startTimer = () => setIsRunning(true)
+  const startTimer = () => {
+    if (!isRunning) {
+      initialTimeRef.current = timeRemaining
+    }
+    setIsRunning(true)
+  }
+
   const pauseTimer = () => setIsRunning(false)
 
   const resetTimer = () => {
     setIsRunning(false)
-    setTimeRemaining(DEFAULT_DURATIONS[mode])
+    const duration = DEFAULT_DURATIONS[mode]
+    setTimeRemaining(duration)
+    initialTimeRef.current = duration
   }
 
   const skipSession = () => {
