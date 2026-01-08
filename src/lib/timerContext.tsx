@@ -117,9 +117,20 @@ export function TimerProvider({ children }: { children: ReactNode }) {
         console.error('Error recording session:', error)
       }
 
+      // Check if auto-start is enabled
+      const autoStartEnabled = localStorage.getItem('pomodoro_settings') ?
+        JSON.parse(localStorage.getItem('pomodoro_settings') || '{}').autoStart : false
+
       // Auto-advance after a short delay
       const timer = setTimeout(() => {
         skipSession()
+
+        // If auto-start is enabled, start the next session automatically
+        if (autoStartEnabled) {
+          setTimeout(() => {
+            setIsRunning(true)
+          }, 500)
+        }
       }, 1000)
 
       return () => clearTimeout(timer)
