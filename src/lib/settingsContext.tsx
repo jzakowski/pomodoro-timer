@@ -98,7 +98,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   // Apply theme changes to document
   useEffect(() => {
-    if (!isLoaded || typeof window === 'undefined') return
+    if (!isLoaded || typeof window === 'undefined') return undefined
 
     const applyTheme = () => {
       const root = document.documentElement
@@ -125,6 +125,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       mediaQuery.addEventListener('change', handleChange)
       return () => mediaQuery.removeEventListener('change', handleChange)
     }
+
+    return undefined
   }, [settings.theme, isLoaded])
 
   // Save settings whenever they change

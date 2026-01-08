@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react'
 import { playCompletionSound } from '@/lib/soundUtils'
+import { useSettings } from '@/lib/settingsContext'
 
 export type SessionType = 'work' | 'shortBreak' | 'longBreak'
 
@@ -29,6 +30,7 @@ const DEFAULT_DURATIONS = {
 }
 
 export function TimerProvider({ children }: { children: ReactNode }) {
+  const { soundEnabled } = useSettings()
   const [mode, setMode] = useState<SessionType>('work')
   const [timeRemaining, setTimeRemaining] = useState(DEFAULT_DURATIONS.work)
   const [isRunning, setIsRunning] = useState(false)
@@ -99,8 +101,10 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     if (timeRemaining === 0 && !sessionCompletedRef.current) {
       sessionCompletedRef.current = true
 
-      // Play completion sound
-      playCompletionSound()
+      // Play completion sound only if sound is enabled
+      if (soundEnabled) {
+        playCompletionSound()
+      }
 
       // Record session completion in localStorage for stats to pick up
       const sessionData = {
