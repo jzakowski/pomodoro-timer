@@ -42,9 +42,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   // Save tasks to localStorage whenever they change
   useEffect(() => {
-    if (tasks.length > 0) {
-      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks))
-    }
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks))
   }, [tasks])
 
   const addTask = (title: string, estimatedPomodoros: number, priority: 'high' | 'medium' | 'low') => {
