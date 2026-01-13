@@ -19,6 +19,12 @@ export default function TasksTab() {
     }
   }
 
+  const handleDeleteTask = (id: string, title: string) => {
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      deleteTask(id)
+    }
+  }
+
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
       case 'high':
@@ -157,7 +163,7 @@ export default function TasksTab() {
                       {task.isCompleted ? 'Completed' : 'Mark Complete'}
                     </button>
                     <button
-                      onClick={() => deleteTask(task.id)}
+                      onClick={() => handleDeleteTask(task.id, task.title)}
                       className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-900 dark:hover:text-red-200 transition-colors duration-150 flex items-center gap-1"
                     >
                       <Trash2 className="w-4 h-4" />
