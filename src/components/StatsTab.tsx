@@ -4,10 +4,22 @@ import { useStats } from '@/lib/statsContext'
 import { Clock, Flame, Target, TrendingUp } from 'lucide-react'
 
 export default function StatsTab() {
-  const { totalSessions, totalMinutes, currentStreak, bestStreak } = useStats()
+  const { totalSessions, totalMinutes, currentStreak, bestStreak, sessionHistory } = useStats()
 
   // Calculate today's focus time
-  const todayFocusMinutes = totalMinutes // In a full implementation, this would filter by today
+  const getTodayDateString = () => {
+    return new Date().toISOString().split('T')[0]
+  }
+
+  const todayDateStr = getTodayDateString()
+  const todaySessions = sessionHistory.filter(
+    (session) =>
+      session.type === 'work' &&
+      session.completed &&
+      new Date(session.timestamp).toISOString().split('T')[0] === todayDateStr
+  )
+
+  const todayFocusMinutes = todaySessions.reduce((total, session) => total + Math.floor(session.duration / 60), 0)
   const focusHours = Math.floor(todayFocusMinutes / 60)
   const focusMinutes = todayFocusMinutes % 60
 
@@ -18,10 +30,12 @@ export default function StatsTab() {
     return `${focusMinutes}m`
   }
 
+  const todaySessionsCount = todaySessions.length
+
   const statsCards = [
     {
       title: "Today's Sessions",
-      value: totalSessions.toString(),
+      value: todaySessionsCount.toString(),
       icon: Target,
       color: 'text-red-500',
       bgColor: 'bg-red-50 dark:bg-red-900/20',
