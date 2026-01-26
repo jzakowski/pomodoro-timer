@@ -28,31 +28,43 @@ const StatsContext = createContext<StatsContextType | undefined>(undefined)
 
 const STORAGE_KEY = 'pomodoro_stats'
 
-// Helper to get today's date string
+// Helper to get today's date string (using local timezone)
 const getTodayDateString = (): string => {
-  const dateStr = new Date().toISOString().split('T')[0]
-  return dateStr || ''
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 // Calculate streak from sessions by date
 const calculateStreak = (sessionsByDate: { [date: string]: number }): number => {
   const dates = Object.keys(sessionsByDate).sort().reverse()
+
+  if (dates.length === 0) return 0
+
   let streak = 0
-  let currentDate = new Date()
-  currentDate.setHours(0, 0, 0, 0)
+  const referenceDate = new Date()
+  referenceDate.setHours(0, 0, 0, 0)
+
+  // Check if we have a session today
+  const today = getTodayDateString()
+  const startDate = dates[0] !== today ? new Date(dates[0]) : referenceDate
+  startDate.setHours(0, 0, 0, 0)
 
   for (const dateStr of dates) {
+    // Parse date string (creates date at local midnight, not UTC)
     const checkDate = new Date(dateStr)
     checkDate.setHours(0, 0, 0, 0)
 
-    const diffTime = currentDate.getTime() - checkDate.getTime()
+    const diffTime = startDate.getTime() - checkDate.getTime()
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
+    // For the first iteration (streak=0), we need diffDays=0 (same day)
+    // For subsequent iterations, we need diffDays=streak (consecutive days)
     if (diffDays === streak) {
       streak++
-      currentDate = new Date(checkDate)
-      currentDate.setDate(currentDate.getDate() - 1)
-    } else if (diffDays > streak) {
+    } else {
       break
     }
   }

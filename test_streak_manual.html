@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streak Calculation Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-result {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .pass {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .fail {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    pre {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 Streak Calculation Test</h1>
+  <p>This page tests the streak calculation logic from the Pomodoro Timer app.</p>
+
+  <div class="test-section">
+    <h2>Test Suite</h2>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <div id="results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Manual Test</h2>
+    <p>Create a custom test case:</p>
+    <input type="text" id="datesInput" placeholder="Enter dates (YYYY-MM-DD, comma-separated)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <button onclick="runManualTest()">Test</button>
+    <div id="manualResult"></div>
+  </div>
+
+  <script>
+    // Copy of the calculateStreak function from the app
+    const getTodayDateString = () => {
+      const date = new Date()
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    const calculateStreak = (sessionsByDate) => {
+      const dates = Object.keys(sessionsByDate).sort().reverse()
+
+      if (dates.length === 0) return 0
+
+      let streak = 0
+      const referenceDate = new Date()
+      referenceDate.setHours(0, 0, 0, 0)
+
+      const today = getTodayDateString()
+      const startDate = dates[0] !== today ? new Date(dates[0]) : referenceDate
+      startDate.setHours(0, 0, 0, 0)
+
+      for (const dateStr of dates) {
+        const checkDate = new Date(dateStr)
+        checkDate.setHours(0, 0, 0, 0)
+
+        const diffTime = startDate.getTime() - checkDate.getTime()
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+        if (diffDays === streak) {
+          streak++
+        } else {
+          break
+        }
+      }
+
+      return streak
+    }
+
+    // Test cases
+    const tests = [
+      {
+        name: 'Test 1: Today has 1 session',
+        input: { [getTodayDateString()]: 1 },
+        expected: 1
+      },
+      {
+        name: 'Test 2: No sessions',
+        input: {},
+        expected: 0
+      }
+    ]
+
+    // Generate test for today and yesterday
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+    const getLocalDateString = (date) => {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    tests.push({
+      name: 'Test 3: Today and yesterday',
+      input: {
+        [getLocalDateString(today)]: 1,
+        [getLocalDateString(yesterday)]: 1
+      },
+      expected: 2
+    })
+
+    // Generate test for 3 consecutive days
+    const day2 = new Date(today)
+    day2.setDate(day2.getDate() - 2)
+    tests.push({
+      name: 'Test 4: 3 consecutive days',
+      input: {
+        [getLocalDateString(today)]: 1,
+        [getLocalDateString(yesterday)]: 1,
+        [getLocalDateString(day2)]: 1
+      },
+      expected: 3
+    })
+
+    // Generate test with gap
+    tests.push({
+      name: 'Test 5: Gap in days',
+      input: {
+        [getLocalDateString(today)]: 1,
+        [getLocalDateString(day2)]: 1
+      },
+      expected: 1
+    })
+
+    function runAllTests() {
+      const resultsDiv = document.getElementById('results')
+      resultsDiv.innerHTML = '<h3>Results:</h3>'
+
+      let passCount = 0
+      let failCount = 0
+
+      tests.forEach(test => {
+        const result = calculateStreak(test.input)
+        const passed = result === test.expected
+
+        if (passed) {
+          passCount++
+        } else {
+          failCount++
+        }
+
+        const resultDiv = document.createElement('div')
+        resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`
+        resultDiv.innerHTML = `
+          <strong>${test.name}</strong><br>
+          Expected: ${test.expected}, Got: ${result}<br>
+          ${passed ? '✅ PASS' : '❌ FAIL'}
+        `
+        resultsDiv.appendChild(resultDiv)
+      })
+
+      const summaryDiv = document.createElement('div')
+      summaryDiv.className = 'test-result'
+      summaryDiv.style.background = passCount === tests.length ? '#d4edda' : '#fff3cd'
+      summaryDiv.innerHTML = `<strong>Summary:</strong> ${passCount}/${tests.length} tests passed`
+      resultsDiv.appendChild(summaryDiv)
+    }
+
+    function runManualTest() {
+      const input = document.getElementById('datesInput').value
+      const dates = input.split(',').map(d => d.trim()).filter(d => d)
+
+      if (dates.length === 0) {
+        document.getElementById('manualResult').innerHTML = '<div class="test-result fail">Please enter at least one date</div>'
+        return
+      }
+
+      const sessionsByDate = {}
+      dates.forEach(date => {
+        sessionsByDate[date] = 1
+      })
+
+      const streak = calculateStreak(sessionsByDate)
+
+      document.getElementById('manualResult').innerHTML = `
+        <div class="test-result pass">
+          <strong>Result:</strong> Streak = ${streak} days<br>
+          <pre>Dates: ${JSON.stringify(sessionsByDate, null, 2)}</pre>
+        </div>
+      `
+    }
+
+    // Run tests on page load
+    window.onload = () => {
+      document.getElementById('datesInput').value = getTodayDateString()
+      runAllTests()
+    }
+  </script>
+</body>
+</html>
