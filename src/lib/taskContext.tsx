@@ -16,6 +16,7 @@ interface TaskContextType {
   tasks: Task[]
   addTask: (title: string, estimatedPomodoros: number, priority: 'high' | 'medium' | 'low') => void
   deleteTask: (id: string) => void
+  editTask: (id: string, newTitle: string) => void
   toggleTaskComplete: (id: string) => void
   setActiveTask: (id: string) => void
   incrementPomodoros: (id: string) => void
@@ -64,6 +65,14 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     setTasks((prev) => prev.filter((task) => task.id !== id))
   }
 
+  const editTask = (id: string, newTitle: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, title: newTitle } : task
+      )
+    )
+  }
+
   const toggleTaskComplete = (id: string) => {
     setTasks((prev) =>
       prev.map((task) =>
@@ -101,6 +110,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         tasks,
         addTask,
         deleteTask,
+        editTask,
         toggleTaskComplete,
         setActiveTask,
         incrementPomodoros,

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manual Test Steps - Edit Task Feature</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    ol {
+      color: #555;
+      line-height: 1.8;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .success {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .checklist {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    .checklist-item input {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-card">
+    <h1>✏️ Edit Task Feature - Manual Test</h1>
+    <h2>Issue #28</h2>
+
+    <h3>Test Steps:</h3>
+    <ol>
+      <li>Open the app at <strong>http://localhost:3000</strong></li>
+      <li>Navigate to the <strong>Tasks tab</strong></li>
+      <li>Create a test task with title: <code>"Original title"</code></li>
+      <li>Click the <strong>pencil/edit icon</strong> on the task card</li>
+      <li>✓ Verify: Edit mode activates (input appears with current text "Original title")</li>
+      <li>Change the text to: <code>"Updated title"</code></li>
+      <li>Click the <strong>green save button</strong> or press <strong>Enter</strong></li>
+      <li>✓ Verify: Task now shows "Updated title"</li>
+      <li>Click the <strong>pencil/edit icon</strong> again</li>
+      <li>Change the text to: <code>"Should not save"</code></li>
+      <li>Press <strong>Escape</strong> or click the <strong>gray cancel button</strong></li>
+      <li>✓ Verify: Task still shows "Updated title" (changes were discarded)</li>
+    </ol>
+
+    <div class="checklist">
+      <h3>Verification Checklist:</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="test1">
+        <label for="test1">Edit button (pencil icon) is visible on task cards</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test2">
+        <label for="test2">Clicking edit button activates edit mode with input field</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test3">
+        <label for="test3">Input field contains current task title</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test4">
+        <label for="test4">Save button (green) and Cancel button (gray) appear</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test5">
+        <label for="test5">Editing title and clicking save updates the task</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test6">
+        <label for="test6">Pressing Enter saves the changes</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test7">
+        <label for="test7">Pressing Escape cancels the edit (no changes saved)</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test8">
+        <label for="test8">Clicking cancel button discards changes</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test9">
+        <label for="test9">UI is polished and professional</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="test10">
+        <label for="test10">No console errors</label>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Save checklist state to localStorage
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox, index) => {
+      const saved = localStorage.getItem(`test_edit_task_${index}`);
+      if (saved === 'true') {
+        checkbox.checked = true;
+      }
+
+      checkbox.addEventListener('change', () => {
+        localStorage.setItem(`test_edit_task_${index}`, checkbox.checked);
+      });
+    });
+  </script>
+</body>
+</html>
