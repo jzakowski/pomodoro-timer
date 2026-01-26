@@ -1,10 +1,12 @@
 'use client'
 
 import { useStats } from '@/lib/statsContext'
-import { Clock, Flame, Target, TrendingUp } from 'lucide-react'
+import { Clock, Flame, Target, TrendingUp, RotateCcw, Download } from 'lucide-react'
+import { useState } from 'react'
 
 export default function StatsTab() {
-  const { totalSessions, totalMinutes, currentStreak, bestStreak } = useStats()
+  const { totalSessions, totalMinutes, currentStreak, bestStreak, resetStats, exportStats } = useStats()
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
 
   // Calculate today's focus time
   const todayFocusMinutes = totalMinutes // In a full implementation, this would filter by today
@@ -16,6 +18,24 @@ export default function StatsTab() {
       return `${focusHours}h ${focusMinutes}m`
     }
     return `${focusMinutes}m`
+  }
+
+  const handleExportStats = () => {
+    const csvData = exportStats()
+    const blob = new Blob([csvData], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `pomodoro-stats-${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleResetStats = () => {
+    resetStats()
+    setShowResetConfirm(false)
   }
 
   const statsCards = [
@@ -105,6 +125,52 @@ export default function StatsTab() {
       <div className="text-center text-sm text-gray-500 dark:text-gray-400">
         <p>Stats update automatically after each session</p>
       </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleExportStats}
+          className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-150 flex items-center justify-center gap-2 font-medium shadow-md"
+        >
+          <Download className="w-5 h-5" />
+          Export Stats
+        </button>
+        <button
+          onClick={() => setShowResetConfirm(true)}
+          className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150 flex items-center justify-center gap-2 font-medium shadow-md"
+        >
+          <RotateCcw className="w-5 h-5" />
+          Reset Stats
+        </button>
+      </div>
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+              Reset All Statistics?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              This will permanently delete all your session history, streaks, and statistics. This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors duration-150 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetStats}
+                className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150 font-medium"
+              >
+                Yes, Reset Stats
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
